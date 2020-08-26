@@ -20,7 +20,7 @@ class StatusEnum(str, Enum):
 class OrderItemSchema(BaseModel):
     product: str
     size: SizeEnum
-    quantity: int = Field(default=1, ge=1)
+    quantity: int = Field(default=1, ge=1, example=1)
 
 
 class CreateOrderSchema(BaseModel):
