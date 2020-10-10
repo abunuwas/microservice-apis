@@ -1,7 +1,3 @@
-from pathlib import Path
-from unittest import TestCase
-
-import yaml
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from marshmallow import Schema, fields, validate
@@ -47,9 +43,12 @@ class CreateOrderSchema(Schema):
 
 class GetOrderSchema(Schema):
     id = fields.UUID(required=True)
-    created = fields.Integer(required=True, description='Date in the form of UNIX timestmap')
+    created = fields.Integer(
+        required=True, description='Date in the form of UNIX timestmap'
+    )
     status = fields.String(
-        required=True, validate=validate.OneOf(['active', 'cancelled', 'completed'])
+        required=True,
+        validate=validate.OneOf(['active', 'cancelled', 'completed'])
     )
     order = fields.List(fields.Nested(OrderItemSchema), required=True)
 
