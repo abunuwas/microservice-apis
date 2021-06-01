@@ -1,3 +1,5 @@
+scalar Datetime
+
 type Supplier {
     id: ID!
     name: String!
@@ -5,11 +7,6 @@ type Supplier {
     contactNumber: String!
     email: String!
     ingredients: [Ingredient!]!
-}
-
-type Coordinate {
-    longitude: Float
-    latitude: Float
 }
 
 enum MeasureUnit {
@@ -23,16 +20,14 @@ type Stock {
     unit: MeasureUnit!
 }
 
-scalar Datetime
-
 type Ingredient {
     id: ID!
     name: String!
     stock: Stock!
     products: [Product!]!
-    supplier: Supplier!
+    supplier: Supplier
     description: String
-    lastUpdated: Datetime
+    lastUpdated: Datetime!
 }
 
 type IngredientRecipe {
@@ -47,38 +42,38 @@ enum Sizes {
     BIG
 }
 
-interface ProdcuctBase {
+interface ProductInterface {
     id: ID!
     name: String!
     price: Float
     size: Sizes
     ingredients: [IngredientRecipe!]
     available: Boolean!
-    lastUpdated: Datetime
+    lastUpdated: Datetime!
 }
 
-type Beverage implements ProdcuctBase {
+type Beverage implements ProductInterface {
     id: ID!
     name: String!
     price: Float
     size: Sizes
-    ingredients: [IngredientRecipe!]
+    ingredients: [IngredientRecipe!]!
     available: Boolean!
-    lastUpdated: Datetime
-    has_cream_on_top_option: Boolean!
-    has_serve_on_ice_option: Boolean!
+    lastUpdated: Datetime!
+    hasCreamOnTopOption: Boolean!
+    hasServeOnIceOption: Boolean!
 }
 
-type Cake implements ProdcuctBase {
+type Cake implements ProductInterface {
     id: ID!
     name: String!
     price: Float
     size: Sizes
     ingredients: [IngredientRecipe!]
     available: Boolean!
-    lastUpdated: Datetime
-    has_filling: Boolean!
-    has_nuts_topping_option: Boolean!
+    lastUpdated: Datetime!
+    hasFilling: Boolean!
+    hasNutsToppingOption: Boolean!
 }
 
 union Product = Beverage | Cake
@@ -99,7 +94,7 @@ input ProductsFilter {
     available: Boolean=true
     sortBy: SortBy=price
     sort: SortingOrder=DESCENDING
-    resultsPerPage: Int=10
+    resultsPerPage: Int = 10
     page: Int = 1
 }
 
@@ -107,7 +102,6 @@ type Query {
     allProducts: [Product!]!
     allIngredients: [Ingredient!]!
     products(input: ProductsFilter!): [Product!]!
-    ingredients(maxStock: Float, minStock: Float): [Ingredient!]
     product(id: ID!): Product
     ingredient(id: ID): Ingredient
 }
@@ -115,11 +109,28 @@ type Query {
 input AddProductInput {
     price: Float
     size: Sizes
-    ingredients: [ID!]
-    has_filling: Boolean = false
-    has_nuts_topping_option: Boolean = false
-    has_cream_on_top_option: Boolean = false
-    has_serve_on_ice_option: Boolean = false
+    ingredients: [ID!]!
+    hasFilling: Boolean = false
+    hasNutsToppingOption: Boolean = false
+    hasCreamOnTopOption: Boolean = false
+    hasServeOnIceOption: Boolean = false
+}
+
+input AddIngredientInput {
+    supplier: AddSupplier
+    stock: AddStock
+    description: String
+}
+
+input AddStock {
+    amount: Float!
+    unit: MeasureUnit!
+}
+
+input AddSupplier {
+    address: String!
+    contactNumber: String!
+    email: String!
 }
 
 enum ProductType {
@@ -128,10 +139,12 @@ enum ProductType {
 }
 
 type Mutation {
+    addSupplier(name: String!, input: AddSupplier!): Supplier!
+    addIngredient(name: String!, input: AddIngredientInput!): Ingredient!
     addProduct(name: String!, type: ProductType!, input: AddProductInput!): Product!
-    updateProduct(id: ID!, name: String, input: AddProductInput!): Product!
+    updateProduct(id: ID!, input: AddProductInput!): Product!
     deleteProduct(id: ID!): Boolean!
-    updateStock(id: ID!, changeAmount: Float!): Ingredient!
+    updateStock(id: ID!, changeAmount: AddStock): Ingredient!
 }
 
 schema {
