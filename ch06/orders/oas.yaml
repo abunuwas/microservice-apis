@@ -1,0 +1,189 @@
+openapi: 3.0.3
+
+info:
+  title: Orders API
+  description: API that allows you to manage orders for CoffeeMesh
+  version: 1.0.0
+
+servers:
+  - url: https://coffeemesh.com
+    description: main production server
+  - url: https://coffeemesh-staging.com
+    description: staging server for testing purposes only
+
+paths:
+  /orders:
+    get:
+      summary: Returns a list of orders
+      description: >
+        A list of orders made by the customer
+        sorted by date. Allows to filter orders
+        by range of dates.
+      responses:
+        '200':
+          description: A JSON array of orders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GetOrderSchema'
+
+    post:
+      summary: Creates an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderSchema'
+      responses:
+        '201':
+          description: A JSON representation of the created order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+
+  /orders/{orderId}:
+    parameters:
+      - in: path
+        name: orderId
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Returns the details of a specific order
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+
+    put:
+      summary: Replaces an existing order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderSchema'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+
+    delete:
+      summary: Deletes an existing order
+      responses:
+        '204':
+          description: The resource was deleted successfully
+
+  /orders/{orderId}/pay:
+    description: Proceses payment for an order
+    parameters:
+      - in: path
+        name: orderId
+        required: true
+        schema:
+          type: string
+
+    post:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+
+
+  /orders/{orderId}/cancel:
+    description: Cancels an order
+    parameters:
+      - in: path
+        name: orderId
+        required: true
+        schema:
+          type: string
+
+    post:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+
+components:
+  schemas:
+    OrderItemSchema:
+      type: object
+      additionalProperties: false
+      required:
+        - product
+        - size
+      properties:
+        product:
+          type: string
+        size:
+          type: string
+          enum:
+            - small
+            - medium
+            - big
+        quantity:
+          type: integer
+          default: 1
+          minimum: 1
+
+    CreateOrderSchema:
+      type: object
+      additionalProperties: false
+      required:
+        - order
+      properties:
+        order:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemSchema'
+
+    GetOrderSchema:
+      type: object
+      additionalProperties: false
+      allOf:
+        - $ref: '#/components/schemas/CreateOrderSchema'
+      required:
+        - id
+        - created
+        - status
+        - order
+      properties:
+        id:
+          type: string
+          format: uuid
+        created:
+          type: integer
+          description: Date in the form of UNIX timestmap
+        status:
+          type: string
+          enum:
+            - created
+            - paid
+            - progress
+            - cancelled
+            - dispatched
+            - delivered
+#        order:
+#          type: array
+#          items:
+#            $ref: '#/components/schemas/OrderItemSchema'
