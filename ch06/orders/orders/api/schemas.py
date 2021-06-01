@@ -23,7 +23,6 @@ class Status(str, Enum):
 class OrderItemSchema(BaseModel):
     product: str
     size: Size
-    # quantity: int = Field(default=1, ge=1, example=1)
     quantity: Optional[conint(ge=1)] = 1
 
     class Config:

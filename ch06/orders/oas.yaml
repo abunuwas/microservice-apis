@@ -183,7 +183,3 @@ components:
             - cancelled
             - dispatched
             - delivered
-#        order:
-#          type: array
-#          items:
-#            $ref: '#/components/schemas/OrderItemSchema'
