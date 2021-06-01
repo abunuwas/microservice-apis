@@ -172,9 +172,11 @@ components:
         status:
           type: string
           enum:
-            - active
+            - created
+            - progress
             - cancelled
-            - completed
+            - dispatched
+            - delivered
         order:
           type: array
           items:

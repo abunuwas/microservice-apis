@@ -12,9 +12,11 @@ class SizeEnum(str, Enum):
 
 
 class StatusEnum(str, Enum):
-    active = 'active'
+    created = 'created'
+    progress = 'progress'
     cancelled = 'cancelled'
-    completed = 'completed'
+    dispatched = 'dispatched'
+    delivered = 'delivered'
 
 
 class OrderItemSchema(BaseModel):
