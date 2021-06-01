@@ -1,0 +1,169 @@
+openapi: 3.0.3
+
+info:
+  title: Kitchen API
+  description: API that allows to manage the production of orders in the kitchen
+  version: 1.0.0
+
+servers:
+  - url: https://coffeemesh.com
+    description: main production server
+  - url: https://coffeemesh-staging.com
+    description: staging server for testing purposes only
+
+paths:
+  /kitchen/schedule:
+    get:
+      summary: Returns a list of orders scheduled for production
+      parameters:
+        - name: cancelled
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of scheduled orders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GetSchedulesSchema'
+
+    post:
+      summary: Schedules an order for production
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleOrderSchema'
+      responses:
+        '201':
+          description: A JSON representation of the created order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+
+  /kitchen/schedule/{schedule_id}:
+    parameters:
+      - in: path
+        name: schedule_id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Returns the status and details of a scheduled order
+      responses:
+        '200':
+          description: A JSON representation of an scheduled order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Updates an existing scheduled order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateScheduledOrderSchema'
+      responses:
+        '200':
+          description: A JSON representation of a scheduled order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScheduledOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Deletes an existing order
+      responses:
+        '204':
+          description: The resource was deleted successfully
+
+components:
+  responses:
+    NotFound:
+      description: The specified resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+    OrderItemSchema:
+      type: object
+      required:
+        - product
+        - size
+      properties:
+        product:
+          type: string
+        size:
+          type: string
+          enum:
+            - small
+            - medium
+            - big
+        quantity:
+          type: integer
+          default: 1
+          minimum: 1
+
+    ScheduleOrderSchema:
+      type: object
+      required:
+        - order
+      properties:
+        order:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemSchema'
+
+    GetScheduledOrderSchema:
+      type: object
+      required:
+        - created
+        - id
+        - order
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        created:
+          type: integer
+          description: Date in the form of UNIX timestmap
+        status:
+          type: string
+          enum:
+            - progress
+            - cancelled
+            - finished
+        order:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemSchema'

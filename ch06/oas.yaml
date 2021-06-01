@@ -1,0 +1,220 @@
+openapi: 3.0.3
+
+info:
+  title: Orders API
+  description: API that allows you to manage orders for CoffeeMesh
+  version: 1.0.0
+
+servers:
+  - url: https://coffeemesh.com
+    description: main production server
+  - url: https://coffeemesh-staging.com
+    description: staging server for testing purposes only
+
+paths:
+  /orders:
+    get:
+      summary: Returns a list of orders
+      description: >
+        A list of orders made by the customer
+        sorted by date. Allows to filter orders
+        by range of dates.
+      parameters:
+        - name: cancelled
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON array of orders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GetOrderSchema'
+
+    post:
+      summary: Creates an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderSchema'
+      responses:
+        '201':
+          description: A JSON representation of the created order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+
+  /orders/{order_id}:
+    parameters:
+      - in: path
+        name: order_id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Returns the details of a specific order
+      responses:
+        '200':
+          description: A JSON representation of an order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Updates an existing order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderSchema'
+      responses:
+        '200':
+          description: A JSON representation of an order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Deletes an existing order
+      responses:
+        '204':
+          description: The resource was deleted successfully
+
+  /orders/{order_id}/pay:
+    parameters:
+      - in: path
+        name: order_id
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Processes payment for an order
+      responses:
+        '200':
+          description: A JSON representation of an order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /orders/{order_id}/cancel:
+    parameters:
+      - in: path
+        name: order_id
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Cancels an order
+      responses:
+        '200':
+          description: A JSON representation of an order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  responses:
+    NotFound:
+      description: The specified resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+    OrderItemSchema:
+      type: object
+      required:
+        - product
+        - size
+      properties:
+        product:
+          type: string
+        size:
+          type: string
+          enum:
+            - small
+            - medium
+            - big
+        quantity:
+          type: integer
+          default: 1
+          minimum: 1
+
+    CreateOrderSchema:
+      type: object
+      required:
+        - order
+      properties:
+        order:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemSchema'
+
+    GetOrderSchema:
+      type: object
+      required:
+        - created
+        - id
+        - order
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        created:
+          type: integer
+          description: Date in the form of UNIX timestmap
+        status:
+          type: string
+          enum:
+            - active
+            - cancelled
+            - completed
+        order:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemSchema'
