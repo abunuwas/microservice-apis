@@ -1,26 +1,42 @@
-import uuid
-
 from ariadne import MutationType
+
+from repository import ProductsRepository, IngredientsRepository, SuppliersRepository
 
 mutation = MutationType()
 
 
+@mutation.field('addSupplier')
+def resolve_add_supplier(*_, name, input):
+    input['name'] = name
+    return SuppliersRepository().add(input)
+
+
+@mutation.field('addIngredient')
+def resolve_add_ingredient(*_, name, input):
+    input['name'] = name
+    return IngredientsRepository().add(input)
+
+
 @mutation.field('addProduct')
 def resolve_add_product(*_, name, type, input):
-    product = {
-        'id': uuid.uuid4(),
-        'name': name,
-        'available': input.get('available', False),
-        'ingredients': input.get('ingredients', []),
-    }
-    if type == 'cake':
-        product.update({
-            'has_filling': input['has_filling'],
-            'has_nuts_topping_option': input['has_nuts_topping_option'],
-        })
-    else:
-        product.update({
-            'has_cream_on_top_option': input['has_cream_on_top_option'],
-            'has_serve_on_ice_option': input['has_serve_on_ice_option'],
-        })
-    return product
+    repository = ProductsRepository()
+    input['name'] = name
+    return repository.add(product=input, product_type=type)
+
+
+@mutation.field('updateProduct')
+def resolve_update_product(*_, id, input):
+    return ProductsRepository().update(id_=id, product_details=input)
+
+
+@mutation.field('deleteProduct')
+def resolve_delete_product(*_, id):
+    ProductsRepository().delete(id)
+    return True
+
+
+@mutation.field('updateStock')
+def resolve_update_stock(*_, id, changeAmount):
+    ingredient = IngredientsRepository().get(id)
+    ingredient['stock'] = changeAmount
+    return ingredient
