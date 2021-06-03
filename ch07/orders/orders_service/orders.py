@@ -1,7 +1,8 @@
 import requests
 
 from orders.orders_service.exceptions import (
-    APIIntegrationError, InvalidActionError
+    APIIntegrationError,
+    InvalidActionError
 )
 
 
@@ -74,7 +75,6 @@ class Order:
         )
         if response.status_code == 201:
             return response.json()['id']
-        print(response.json())
         raise APIIntegrationError(
             f'Could not schedule order with id {self.id}'
         )
