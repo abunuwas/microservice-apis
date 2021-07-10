@@ -16,7 +16,7 @@ enum MeasureUnit {
 }
 
 type Stock {
-    amount: Float!
+    quantity: Float!
     unit: MeasureUnit!
 }
 
@@ -32,8 +32,8 @@ type Ingredient {
 
 type IngredientRecipe {
     ingredient: Ingredient!
-    amount: Float!
-    unit: String!
+    quantity: Float!
+    unit: MeasureUnit!
 }
 
 enum Sizes {
@@ -103,7 +103,7 @@ type Query {
     allIngredients: [Ingredient!]!
     products(input: ProductsFilter!): [Product!]!
     product(id: ID!): Product
-    ingredient(id: ID): Ingredient
+    ingredient(id: ID!): Ingredient
 }
 
 input AddProductInput {
@@ -119,11 +119,11 @@ input AddProductInput {
 input AddIngredientInput {
     supplier: AddSupplier
     stock: AddStock
-    description: String
+    description: [String!]!
 }
 
 input AddStock {
-    amount: Float!
+    quantity: Float!
     unit: MeasureUnit!
 }
 
