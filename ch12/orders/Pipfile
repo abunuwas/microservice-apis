@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+datamodel-code-generator = "*"
+dredd-hooks = "*"
+schemathesis = "*"
+
+[packages]
+fastapi = "*"
+uvicorn = "*"
+orjson = "*"
+
+[requires]
+python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
