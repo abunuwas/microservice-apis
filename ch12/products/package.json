@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "graphql-faker": "^2.0.0-rc.25"
+  }
+}
