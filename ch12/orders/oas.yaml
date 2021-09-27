@@ -14,6 +14,7 @@ servers:
 paths:
   /orders:
     get:
+      operationId: getOrders
       summary: Returns a list of orders
       description: >
         A list of orders made by the customer
@@ -33,6 +34,7 @@ paths:
                       $ref: '#/components/schemas/GetOrderSchema'
 
     post:
+      operationId: createOrder
       summary: Creates an order
       requestBody:
         required: true
@@ -47,6 +49,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
+          links:
+            GetOrder:
+              operationId: getOrder
+              parameters:
+                orderId: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `orderId` parameter in `GET /orders/{orderId}
+            UpdateOrder:
+              operationId: updateOrder
+              parameters:
+                orderId: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `orderId` parameter in `PUT /orders/{orderId}
+            DeleteOrder:
+              operationId: deleteOrder
+              parameters:
+                orderId: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `orderId` parameter in `DELETE /orders/{orderId}
+            CancelOrder:
+              operationId: cancelOrder
+              parameters:
+                orderId: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `orderId` parameter in `DELETE /orders/{orderId}/cancel
+            PayOrder:
+              operationId: payOrder
+              parameters:
+                orderId: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `orderId` parameter in `DELETE /orders/{orderId}/pay
 
   /orders/{orderId}:
     parameters:
@@ -57,6 +95,7 @@ paths:
           type: string
         example: d222e7a3-6afb-463a-9709-38eb70cc670d
     get:
+      operationId: getOrder
       summary: Returns the details of a specific order
       responses:
         '200':
@@ -67,6 +106,7 @@ paths:
                 $ref: '#/components/schemas/GetOrderSchema'
 
     put:
+      operationId: updateOrder
       summary: Replaces an existing order
       requestBody:
         required: true
@@ -83,6 +123,7 @@ paths:
                 $ref: '#/components/schemas/GetOrderSchema'
 
     delete:
+      operationId: deleteOrder
       summary: Deletes an existing order
       responses:
         '204':
@@ -97,6 +138,7 @@ paths:
           type: string
         example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
+      operationId: payOrder
       summary: Processes payment for an order
       responses:
         '200':
@@ -116,6 +158,7 @@ paths:
           type: string
         example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
+      operationId: cancelOrder
       summary: Cancels an order
       responses:
         '200':
@@ -156,6 +199,7 @@ components:
       properties:
         order:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/OrderItemSchema'
 
