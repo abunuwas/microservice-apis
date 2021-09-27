@@ -65,43 +65,43 @@ paths:
             GetOrder:
               operationId: getOrder
               parameters:
-                orderId: '$response.body#/id'
+                order_id: '$response.body#/id'
               description: >
                 The `id` value returned in the response can be used as
-                the `orderId` parameter in `GET /orders/{orderId}
+                the `order_id` parameter in `GET /orders/{order_id}
             UpdateOrder:
               operationId: updateOrder
               parameters:
-                orderId: '$response.body#/id'
+                order_id: '$response.body#/id'
               description: >
                 The `id` value returned in the response can be used as
-                the `orderId` parameter in `PUT /orders/{orderId}
+                the `order_id` parameter in `PUT /orders/{order_id}
             DeleteOrder:
               operationId: deleteOrder
               parameters:
-                orderId: '$response.body#/id'
+                order_id: '$response.body#/id'
               description: >
                 The `id` value returned in the response can be used as
-                the `orderId` parameter in `DELETE /orders/{orderId}
+                the `order_id` parameter in `DELETE /orders/{order_id}
             CancelOrder:
               operationId: cancelOrder
               parameters:
-                orderId: '$response.body#/id'
+                order_id: '$response.body#/id'
               description: >
                 The `id` value returned in the response can be used as
-                the `orderId` parameter in `DELETE /orders/{orderId}/cancel
+                the `order_id` parameter in `DELETE /orders/{order_id}/cancel
             PayOrder:
               operationId: payOrder
               parameters:
-                orderId: '$response.body#/id'
+                order_id: '$response.body#/id'
               description: >
                 The `id` value returned in the response can be used as
-                the `orderId` parameter in `DELETE /orders/{orderId}/pay
+                the `order_id` parameter in `DELETE /orders/{order_id}/pay
 
-  /orders/{orderId}:
+  /orders/{order_id}:
     parameters:
       - in: path
-        name: orderId
+        name: order_id
         required: true
         schema:
           type: string
@@ -147,10 +147,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /orders/{orderId}/pay:
+  /orders/{order_id}/pay:
     parameters:
       - in: path
-        name: orderId
+        name: order_id
         required: true
         schema:
           type: string
@@ -169,10 +169,10 @@ paths:
           $ref: '#/components/responses/NotFound'
 
 
-  /orders/{orderId}/cancel:
+  /orders/{order_id}/cancel:
     parameters:
       - in: path
-        name: orderId
+        name: order_id
         required: true
         schema:
           type: string

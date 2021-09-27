@@ -59,10 +59,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
 
-  /orders/{orderId}:
+  /orders/{order_id}:
     parameters:
       - in: path
-        name: orderId
+        name: order_id
         required: true
         schema:
           type: string
@@ -104,10 +104,10 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /orders/{orderId}/pay:
+  /orders/{order_id}/pay:
     parameters:
       - in: path
-        name: orderId
+        name: order_id
         required: true
         schema:
           type: string
@@ -124,10 +124,10 @@ paths:
           $ref: '#/components/responses/NotFound'
 
 
-  /orders/{orderId}/cancel:
+  /orders/{order_id}/cancel:
     parameters:
       - in: path
-        name: orderId
+        name: order_id
         required: true
         schema:
           type: string
