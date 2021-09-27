@@ -26,6 +26,7 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: false
                 properties:
                   orders:
                     type: array
@@ -126,6 +127,7 @@ components:
   schemas:
     OrderItemSchema:
       type: object
+      additionalProperties: false
       required:
         - product
         - size
@@ -146,6 +148,7 @@ components:
 
     CreateOrderSchema:
       type: object
+      additionalProperties: false
       required:
         - order
       properties:
@@ -157,6 +160,7 @@ components:
 
     GetOrderSchema:
       type: object
+      additionalProperties: false
       allOf:
         - $ref: '#/components/schemas/CreateOrderSchema'
       required:
