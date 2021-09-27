@@ -14,6 +14,17 @@ servers:
 paths:
   /orders:
     get:
+      parameters:
+      - name: cancelled
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
       summary: Returns a list of orders
       description: >
         A list of orders made by the customer
@@ -64,6 +75,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
     put:
       summary: Replaces an existing order
@@ -80,12 +93,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
     delete:
       summary: Deletes an existing order
       responses:
         '204':
           description: The resource was deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /orders/{orderId}/pay:
     parameters:
@@ -103,6 +120,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
 
   /orders/{orderId}/cancel:
@@ -123,7 +142,32 @@ paths:
                 $ref: '#/components/schemas/GetOrderSchema'
 
 components:
+  responses:
+    NotFound:
+      description: The specified resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    basicAuth:
+      type: http
+      scheme: basic
+
   schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
     OrderItemSchema:
       type: object
       required:

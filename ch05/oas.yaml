@@ -14,22 +14,22 @@ servers:
 paths:
   /orders:
     get:
+      parameters:
+      - name: cancelled
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
       summary: Returns a list of orders
       description: >
         A list of orders made by the customer
         sorted by date. Allows to filter orders
         by range of dates.
-      parameters:
-        - name: cancelled
-          in: query
-          required: false
-          schema:
-            type: boolean
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
       responses:
         '200':
           description: A JSON array of orders
@@ -37,6 +37,7 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: false
                 properties:
                   orders:
                     type: array
@@ -59,10 +60,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
 
-  /orders/{order_id}:
+  /orders/{orderId}:
     parameters:
       - in: path
-        name: order_id
+        name: orderId
         required: true
         schema:
           type: string
@@ -70,7 +71,7 @@ paths:
       summary: Returns the details of a specific order
       responses:
         '200':
-          description: A JSON representation of an order
+          description: OK
           content:
             application/json:
               schema:
@@ -79,7 +80,7 @@ paths:
           $ref: '#/components/responses/NotFound'
 
     put:
-      summary: Updates an existing order
+      summary: Replaces an existing order
       requestBody:
         required: true
         content:
@@ -88,7 +89,7 @@ paths:
               $ref: '#/components/schemas/CreateOrderSchema'
       responses:
         '200':
-          description: A JSON representation of an order
+          description: OK
           content:
             application/json:
               schema:
@@ -101,11 +102,13 @@ paths:
       responses:
         '204':
           description: The resource was deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
 
-  /orders/{order_id}/pay:
+  /orders/{orderId}/pay:
     parameters:
       - in: path
-        name: order_id
+        name: orderId
         required: true
         schema:
           type: string
@@ -113,7 +116,7 @@ paths:
       summary: Processes payment for an order
       responses:
         '200':
-          description: A JSON representation of an order
+          description: OK
           content:
             application/json:
               schema:
@@ -121,10 +124,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /orders/{order_id}/cancel:
+
+  /orders/{orderId}/cancel:
     parameters:
       - in: path
-        name: order_id
+        name: orderId
         required: true
         schema:
           type: string
@@ -132,13 +136,11 @@ paths:
       summary: Cancels an order
       responses:
         '200':
-          description: A JSON representation of an order
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
-        '404':
-          $ref: '#/components/responses/NotFound'
 
 components:
   responses:
@@ -164,9 +166,13 @@ components:
       properties:
         error:
           type: string
+      required:
+        - error
+      additionalProperties: false
 
     OrderItemSchema:
       type: object
+      additionalProperties: false
       required:
         - product
         - size
@@ -181,40 +187,45 @@ components:
             - big
         quantity:
           type: integer
+          format: int64
           default: 1
           minimum: 1
 
     CreateOrderSchema:
       type: object
+      additionalProperties: false
       required:
         - order
       properties:
         order:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/OrderItemSchema'
 
     GetOrderSchema:
       type: object
+      additionalProperties: false
+      allOf:
+        - $ref: '#/components/schemas/CreateOrderSchema'
       required:
-        - created
         - id
-        - order
+        - created
         - status
+        - order
       properties:
         id:
           type: string
           format: uuid
         created:
-          type: integer
-          description: Date in the form of UNIX timestmap
+          type: string
+          format: date-time
         status:
           type: string
           enum:
-            - active
+            - created
+            - paid
+            - progress
             - cancelled
-            - completed
-        order:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderItemSchema'
+            - dispatched
+            - delivered
