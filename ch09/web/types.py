@@ -3,8 +3,7 @@ from datetime import datetime
 
 from ariadne import UnionType, ScalarType, InterfaceType, ObjectType
 
-from repository import IngredientsRepository, SuppliersRepository, ProductsRepository
-from web.data import ingredients
+from web.data import ingredients, suppliers, products
 
 product_interface = InterfaceType('ProductInterface')
 product_type = UnionType('Product')
@@ -44,13 +43,15 @@ def resolve_product_ingredients(product, _):
 @ingredient_type.field('supplier')
 def resolve_ingredient_suppliers(ingredient, _):
     if ingredient.get('supplier') is not None:
-        return SuppliersRepository().get(ingredient['supplier'])
+        for supplier in suppliers:
+            if supplier['id'] == ingredient['supplier']:
+                return supplier
 
 
 @ingredient_type.field('products')
 def resolve_ingredient_products(ingredient, _):
     return [
-        product for product in ProductsRepository().list()
+        product for product in products
         if ingredient['id'] in product.get('ingredients', [])
     ]
 
@@ -58,6 +59,6 @@ def resolve_ingredient_products(ingredient, _):
 @supplier_type.field('ingredients')
 def resolve_supplier_ingredients(supplier, _):
     return [
-        ingredient for ingredient in IngredientsRepository().list()
+        ingredient for ingredient in ingredients
         if supplier['id'] in ingredient.get('suppliers', [])
     ]

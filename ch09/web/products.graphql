@@ -106,10 +106,16 @@ type Query {
     ingredient(id: ID!): Ingredient
 }
 
+input IngredientRecipeInput {
+    ingredient: ID!
+    quantity: Float!
+    unit: MeasureUnit!
+}
+
 input AddProductInput {
     price: Float
     size: Sizes
-    ingredients: [ID!]!
+    ingredients: [IngredientRecipeInput!]!
     hasFilling: Boolean = false
     hasNutsToppingOption: Boolean = false
     hasCreamOnTopOption: Boolean = false
