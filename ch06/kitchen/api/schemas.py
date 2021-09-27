@@ -23,13 +23,15 @@ class ScheduleOrderSchema(Schema):
 
 class GetScheduledOrderSchema(ScheduleOrderSchema):
     id = fields.UUID(required=True)
-    scheduled = fields.Integer(
-        required=True, description='Date in the form of UNIX timestmap'
-    )
+    scheduled = fields.DateTime(required=True)
     status = fields.String(
         required=True,
         validate=validate.OneOf(['pending', 'progress', 'cancelled', 'finished'])  # noqa: E501
     )
+
+
+class GetScheduledOrdersSchema(Schema):
+    schedules = fields.List(fields.Nested(GetScheduledOrderSchema), required=True)
 
 
 class GetKitchenScheduleParameters(Schema):

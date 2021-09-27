@@ -203,8 +203,8 @@ components:
           type: string
           format: uuid
         scheduled:
-          type: integer
-          description: Date in the form of UNIX timestmap
+          type: string
+          format: 'date-time'
         status:
           type: string
           enum:

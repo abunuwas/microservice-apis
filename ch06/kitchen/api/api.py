@@ -1,3 +1,4 @@
+import copy
 import uuid
 from datetime import datetime
 
@@ -7,8 +8,12 @@ from flask_smorest import Blueprint
 from marshmallow import ValidationError
 
 from api.schemas import (
-    GetScheduledOrderSchema, ScheduleOrderSchema, GetKitchenScheduleParameters
+    GetScheduledOrderSchema,
+    ScheduleOrderSchema,
+    GetKitchenScheduleParameters,
+    GetScheduledOrdersSchema
 )
+
 
 blueprint = Blueprint('kitchen', __name__, description='Kitchen API')
 
@@ -17,6 +22,8 @@ schedules = []
 
 
 def validate_schedule(schedule):
+    schedule = copy.deepcopy(schedule)
+    schedule['scheduled'] = schedule['scheduled'].isoformat()
     errors = GetScheduledOrderSchema().validate(schedule)
     if errors:
         raise ValidationError(errors)
@@ -26,13 +33,13 @@ def validate_schedule(schedule):
 class KitchenSchedules(MethodView):
 
     @blueprint.arguments(GetKitchenScheduleParameters, location='query')
-    @blueprint.response(GetScheduledOrderSchema(many=True))
+    @blueprint.response(GetScheduledOrdersSchema)
     def get(self, args):
         for schedule in schedules:
             validate_schedule(schedule)
 
         if not args:
-            return schedules, 200
+            return {'schedules': schedules}, 200
 
         query_set = [schedule for schedule in schedules]
 
@@ -53,20 +60,20 @@ class KitchenSchedules(MethodView):
         if since is not None:
             query_set = [
                 schedule for schedule in schedules
-                if schedule['scheduled'] >= datetime.timestamp(since)
+                if schedule['scheduled'] >= since
             ]
 
         limit = args.get('limit')
-        if limit is not None and len(query_set > limit):
+        if limit is not None and len(query_set) > limit:
             query_set = query_set[:limit]
 
-        return query_set, 200
+        return {'schedules': query_set}, 200
 
     @blueprint.arguments(ScheduleOrderSchema)
     @blueprint.response(GetScheduledOrderSchema)
     def post(self, payload):
         payload['id'] = str(uuid.uuid4())
-        payload['scheduled'] = datetime.now().timestamp()
+        payload['scheduled'] = datetime.utcnow()
         payload['status'] = 'pending'
         schedules.append(payload)
         validate_schedule(payload)
