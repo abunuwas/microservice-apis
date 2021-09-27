@@ -17,7 +17,7 @@ ingredients = [
         'name': 'Milk',
         'stock': {
             'amount': 100.00,
-            'unit': 'LITRES',
+            'unit': 'LITERS',
         },
         'products': [],
         'supplier': '92f2daae-a4f8-4aae-8d74-51dd74e5de6d',
@@ -36,8 +36,8 @@ products = [
         'ingredients': [
             {
                 'ingredient': '602f2ab3-97bd-468e-a88b-bb9e00531fd0',
-                'amount': 100.00,
-                'unit': 'LITRES',
+                'quantity': 100.00,
+                'unit': 'LITERS',
             }
         ],
         'hasFilling': False,
@@ -53,8 +53,8 @@ products = [
         'ingredients': [
             {
                 'ingredient': '602f2ab3-97bd-468e-a88b-bb9e00531fd0',
-                'amount': 100.00,
-                'unit': 'LITRES',
+                'quantity': 100.00,
+                'unit': 'LITERS',
             }
         ],
         'hasCreamOnTopOption': True,
