@@ -4,11 +4,11 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+alembic = "*"
 
 [packages]
 sqlalchemy = "*"
 fastapi = "*"
-alembic = "*"
 uvicorn = "*"
 requests = "*"
 
