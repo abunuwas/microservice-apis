@@ -1,18 +1,20 @@
+from datetime import datetime
 from enum import Enum
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, conint
 
 
-class SizeEnum(str, Enum):
+class Size(Enum):
     small = 'small'
     medium = 'medium'
     big = 'big'
 
 
-class StatusEnum(str, Enum):
+class StatusEnum(Enum):
     created = 'created'
+    paid = 'paid'
     progress = 'progress'
     cancelled = 'cancelled'
     dispatched = 'dispatched'
@@ -21,8 +23,8 @@ class StatusEnum(str, Enum):
 
 class OrderItemSchema(BaseModel):
     product: str
-    size: SizeEnum
-    quantity: int = Field(default=1, ge=1, example=1)
+    size: Size
+    quantity: Optional[conint(ge=1, strict=True)] = 1
 
 
 class CreateOrderSchema(BaseModel):
@@ -31,5 +33,9 @@ class CreateOrderSchema(BaseModel):
 
 class GetOrderSchema(CreateOrderSchema):
     id: UUID
-    created: int = Field(description='Date in the form of UNIX timestmap')
+    created: datetime
     status: StatusEnum
+
+
+class GetOrdersSchema(BaseModel):
+    orders: List[GetOrderSchema]

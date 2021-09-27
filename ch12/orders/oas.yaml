@@ -27,6 +27,7 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: false
                 properties:
                   orders:
                     type: array

@@ -26,6 +26,7 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: false
                 properties:
                   orders:
                     type: array
@@ -88,15 +89,14 @@ paths:
           description: The resource was deleted successfully
 
   /orders/{orderId}/pay:
-    description: Proceses payment for an order
     parameters:
       - in: path
         name: orderId
         required: true
         schema:
           type: string
-
     post:
+      summary: Processes payment for an order
       responses:
         '200':
           description: OK
@@ -107,15 +107,14 @@ paths:
 
 
   /orders/{orderId}/cancel:
-    description: Cancels an order
     parameters:
       - in: path
         name: orderId
         required: true
         schema:
           type: string
-
     post:
+      summary: Cancels an order
       responses:
         '200':
           description: OK
@@ -143,6 +142,7 @@ components:
             - big
         quantity:
           type: integer
+          format: int64
           default: 1
           minimum: 1
 
@@ -154,6 +154,7 @@ components:
       properties:
         order:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/OrderItemSchema'
 
@@ -172,8 +173,8 @@ components:
           type: string
           format: uuid
         created:
-          type: integer
-          description: Date in the form of UNIX timestmap
+          type: string
+          format: date-time
         status:
           type: string
           enum:
@@ -183,7 +184,3 @@ components:
             - cancelled
             - dispatched
             - delivered
-#        order:
-#          type: array
-#          items:
-#            $ref: '#/components/schemas/OrderItemSchema'
