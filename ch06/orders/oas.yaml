@@ -88,15 +88,14 @@ paths:
           description: The resource was deleted successfully
 
   /orders/{orderId}/pay:
-    description: Proceses payment for an order
     parameters:
       - in: path
         name: orderId
         required: true
         schema:
           type: string
-
     post:
+      summary: Processes payment for an order
       responses:
         '200':
           description: OK
@@ -107,15 +106,14 @@ paths:
 
 
   /orders/{orderId}/cancel:
-    description: Cancels an order
     parameters:
       - in: path
         name: orderId
         required: true
         schema:
           type: string
-
     post:
+      summary: Cancels an order
       responses:
         '200':
           description: OK
@@ -128,7 +126,6 @@ components:
   schemas:
     OrderItemSchema:
       type: object
-      additionalProperties: false
       required:
         - product
         - size
@@ -143,23 +140,23 @@ components:
             - big
         quantity:
           type: integer
+          format: int64
           default: 1
           minimum: 1
 
     CreateOrderSchema:
       type: object
-      additionalProperties: false
       required:
         - order
       properties:
         order:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/OrderItemSchema'
 
     GetOrderSchema:
       type: object
-      additionalProperties: false
       allOf:
         - $ref: '#/components/schemas/CreateOrderSchema'
       required:
@@ -172,8 +169,8 @@ components:
           type: string
           format: uuid
         created:
-          type: integer
-          description: Date in the form of UNIX timestmap
+          type: string
+          format: date-time
         status:
           type: string
           enum:

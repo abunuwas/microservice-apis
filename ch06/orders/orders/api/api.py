@@ -1,22 +1,22 @@
 import uuid
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 from uuid import UUID
 
 from fastapi import HTTPException
 from starlette import status
+from starlette.responses import Response
 
 from orders.app import app
-from orders.api.schemas import GetOrderSchema, CreateOrderSchema
-
+from orders.api.schemas import GetOrderSchema, CreateOrderSchema, GetOrdersSchema
 
 orders = []
 
 
-@app.get('/orders', response_model=List[GetOrderSchema])
+@app.get('/orders', response_model=GetOrdersSchema)
 def get_orders(cancelled: Optional[bool] = None, limit: Optional[int] = None):
     if cancelled is None and limit is None:
-        return orders
+        return {'orders': orders}
 
     query_set = [order for order in orders]
 
@@ -27,16 +27,16 @@ def get_orders(cancelled: Optional[bool] = None, limit: Optional[int] = None):
             query_set = [order for order in query_set if order['status'] != 'cancelled']  # noqa: E501
 
     if limit is not None and len(query_set) > limit:
-        return query_set[:limit]
+        return {'orders': query_set[:limit]}
 
-    return query_set
+    return {'orders': query_set}
 
 
 @app.post('/orders', status_code=status.HTTP_201_CREATED, response_model=GetOrderSchema)  # noqa: E501
 def create_order(order: CreateOrderSchema):
     order = order.dict()
     order['id'] = uuid.uuid4()
-    order['created'] = datetime.now().timestamp()
+    order['created'] = datetime.utcnow()
     order['status'] = 'created'
     orders.append(order)
     return order
@@ -63,7 +63,7 @@ def update_order(order_id: UUID, order_details: CreateOrderSchema):
     )
 
 
-@app.delete('/orders/{order_id}', response_model=GetOrderSchema)
+@app.delete('/orders/{order_id}', status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
 def delete_order(order_id: UUID):
     for index, order in enumerate(orders):
         if order['id'] == order_id:
