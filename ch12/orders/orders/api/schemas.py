@@ -24,7 +24,7 @@ class Status(Enum):
 class OrderItemSchema(BaseModel):
     product: StrictStr
     size: Size
-    quantity: Optional[conint(ge=1)] = 1
+    quantity: Optional[conint(ge=1, strict=True)] = 1
 
     class Config:
         extra = Extra.forbid
