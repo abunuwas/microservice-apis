@@ -1,0 +1,159 @@
+scalar Datetime
+
+type Supplier {
+    id: ID!
+    name: String!
+    address: String!
+    contactNumber: String!
+    email: String!
+    ingredients: [Ingredient!]!
+}
+
+enum MeasureUnit {
+    LITERS
+    KILOGRAMS
+    UNITS
+}
+
+type Stock {
+    quantity: Float!
+    unit: MeasureUnit!
+}
+
+type Ingredient {
+    id: ID!
+    name: String!
+    stock: Stock!
+    products: [Product!]!
+    supplier: Supplier
+    description: String
+    lastUpdated: Datetime!
+}
+
+type IngredientRecipe {
+    ingredient: Ingredient!
+    quantity: Float!
+    unit: MeasureUnit!
+}
+
+enum Sizes {
+    SMALL
+    MEDIUM
+    BIG
+}
+
+interface ProductInterface {
+    id: ID!
+    name: String!
+    price: Float
+    size: Sizes
+    ingredients: [IngredientRecipe!]
+    available: Boolean!
+    lastUpdated: Datetime!
+}
+
+type Beverage implements ProductInterface {
+    id: ID!
+    name: String!
+    price: Float
+    size: Sizes
+    ingredients: [IngredientRecipe!]!
+    available: Boolean!
+    lastUpdated: Datetime!
+    hasCreamOnTopOption: Boolean!
+    hasServeOnIceOption: Boolean!
+}
+
+type Cake implements ProductInterface {
+    id: ID!
+    name: String!
+    price: Float
+    size: Sizes
+    ingredients: [IngredientRecipe!]
+    available: Boolean!
+    lastUpdated: Datetime!
+    hasFilling: Boolean!
+    hasNutsToppingOption: Boolean!
+}
+
+union Product = Beverage | Cake
+
+enum SortingOrder {
+    ASCENDING
+    DESCENDING
+}
+
+enum SortBy {
+    price
+    name
+}
+
+input ProductsFilter {
+    maxPrice: Float
+    minPrice: Float
+    available: Boolean=true
+    sortBy: SortBy=price
+    sort: SortingOrder=DESCENDING
+    resultsPerPage: Int = 10
+    page: Int = 1
+}
+
+type Query {
+    allProducts: [Product!]!
+    allIngredients: [Ingredient!]!
+    products(input: ProductsFilter!): [Product!]!
+    product(id: ID!): Product
+    ingredient(id: ID!): Ingredient
+}
+
+input IngredientRecipeInput {
+    ingredient: ID!
+    quantity: Float!
+    unit: MeasureUnit!
+}
+
+input AddProductInput {
+    price: Float
+    size: Sizes
+    ingredients: [IngredientRecipeInput!]!
+    hasFilling: Boolean = false
+    hasNutsToppingOption: Boolean = false
+    hasCreamOnTopOption: Boolean = false
+    hasServeOnIceOption: Boolean = false
+}
+
+input AddIngredientInput {
+    supplier: AddSupplier
+    stock: AddStock
+    description: [String!]!
+}
+
+input AddStock {
+    quantity: Float!
+    unit: MeasureUnit!
+}
+
+input AddSupplier {
+    address: String!
+    contactNumber: String!
+    email: String!
+}
+
+enum ProductType {
+    cake
+    beverage
+}
+
+type Mutation {
+    addSupplier(name: String!, input: AddSupplier!): Supplier!
+    addIngredient(name: String!, input: AddIngredientInput!): Ingredient!
+    addProduct(name: String!, type: ProductType!, input: AddProductInput!): Product!
+    updateProduct(id: ID!, input: AddProductInput!): Product!
+    deleteProduct(id: ID!): Boolean!
+    updateStock(id: ID!, changeAmount: AddStock): Ingredient!
+}
+
+schema {
+    query: Query,
+    mutation: Mutation
+}
