@@ -3,16 +3,16 @@ from enum import Enum
 from typing import List, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, Extra, conint
+from pydantic import BaseModel, Extra, conint, conlist, validator, StrictStr
 
 
-class Size(str, Enum):
+class Size(Enum):
     small = 'small'
     medium = 'medium'
     big = 'big'
 
 
-class Status(str, Enum):
+class Status(Enum):
     created = 'created'
     paid = 'paid'
     progress = 'progress'
@@ -22,16 +22,21 @@ class Status(str, Enum):
 
 
 class OrderItemSchema(BaseModel):
-    product: str
+    product: StrictStr
     size: Size
     quantity: Optional[conint(ge=1)] = 1
 
     class Config:
         extra = Extra.forbid
 
+    @validator('quantity')
+    def quantity_non_nullable(cls, value):
+        assert value is not None, 'quantity may not be None'
+        return value
+
 
 class CreateOrderSchema(BaseModel):
-    order: List[OrderItemSchema]
+    order: conlist(OrderItemSchema, min_items=1)
 
     class Config:
         extra = Extra.forbid
