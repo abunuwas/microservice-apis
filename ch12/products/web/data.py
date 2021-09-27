@@ -16,7 +16,7 @@ ingredients = [
         'id': '602f2ab3-97bd-468e-a88b-bb9e00531fd0',
         'name': 'Milk',
         'stock': {
-            'amount': 100.00,
+            'quantity': 100.00,
             'unit': 'LITERS',
         },
         'products': [],
