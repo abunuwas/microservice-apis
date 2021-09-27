@@ -36,7 +36,7 @@ def get_orders(cancelled: Optional[bool] = None, limit: Optional[int] = None):
 def create_order(order: CreateOrderSchema):
     order = order.dict()
     order['id'] = uuid.uuid4()
-    order['created'] = datetime.now()
+    order['created'] = datetime.utcnow()
     order['status'] = 'created'
     orders.append(order)
     return order
