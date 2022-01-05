@@ -3,11 +3,8 @@ from sqlalchemy.orm import sessionmaker
 
 
 class UnitOfWork:
-
     def __init__(self):
-        self.session_maker = sessionmaker(
-            bind=create_engine('sqlite:///orders.db')
-        )
+        self.session_maker = sessionmaker(bind=create_engine("sqlite:///orders.db"))
 
     def __enter__(self):
         self.session = self.session_maker()
