@@ -7,18 +7,18 @@ from pydantic import BaseModel, Extra, conint, conlist, validator, StrictStr
 
 
 class Size(Enum):
-    small = 'small'
-    medium = 'medium'
-    big = 'big'
+    small = "small"
+    medium = "medium"
+    big = "big"
 
 
 class Status(Enum):
-    created = 'created'
-    paid = 'paid'
-    progress = 'progress'
-    cancelled = 'cancelled'
-    dispatched = 'dispatched'
-    delivered = 'delivered'
+    created = "created"
+    paid = "paid"
+    progress = "progress"
+    cancelled = "cancelled"
+    dispatched = "dispatched"
+    delivered = "delivered"
 
 
 class OrderItemSchema(BaseModel):
@@ -29,9 +29,9 @@ class OrderItemSchema(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    @validator('quantity')
+    @validator("quantity")
     def quantity_non_nullable(cls, value):
-        assert value is not None, 'quantity may not be None'
+        assert value is not None, "quantity may not be None"
         return value
 
 
