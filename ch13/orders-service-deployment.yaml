@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-service
+  namespace: orders-service
+  labels:
+    app: orders-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-service
+  template:
+    metadata:
+      labels:
+        app: orders-service
+    spec:
+      containers:
+      - name: orders-service
+        image: <aws_service_account_id>.dkr.ecr.eu-west-1.amazonaws.com/coffeemesh-orders:1.3
+        ports:
+          - containerPort: 8000
+        imagePullPolicy: Always
+        envFrom:
+          - secretRef:
+              name: db-credentials
