@@ -3,8 +3,8 @@ import requests
 
 def get_access_token():
     payload = {
-        "client_id": "MQjOO2o3rdM3XhoiTB5cr497Irr63g8n",
-        "client_secret": "gU5CsCxcFQT3RnJXupaMPsg6-PwzPiwo1Q0K0Pg16fLkWG1AdgXjGasZoYNkP2_j",
+        "client_id": "",
+        "client_secret": "",
         "audience": "http://127.0.0.1:8000/orders",
         "grant_type": "client_credentials"
     }
