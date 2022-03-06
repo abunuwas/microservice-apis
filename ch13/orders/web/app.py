@@ -1,7 +1,5 @@
 import os
-from pathlib import Path
 
-import yaml
 from fastapi import FastAPI
 from jwt import (
     ExpiredSignatureError,
@@ -21,14 +19,10 @@ from starlette.responses import Response, JSONResponse
 
 from orders.web.api.auth import decode_and_validate_token
 
-app = FastAPI(debug=True, openapi_url="/openapi/orders.json", docs_url="/docs/orders")
-
-oas_doc = yaml.safe_load((Path(__file__).parent / "../../oas.yaml").read_text())
-
-app.openapi = lambda: oas_doc
+app = FastAPI(debug=True)
 
 
-class AuthorizeRequestMiddleware(BaseHTTPMiddleware):
+class AuthenticateRequestMiddleware(BaseHTTPMiddleware):
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint
     ) -> Response:
@@ -72,7 +66,7 @@ class AuthorizeRequestMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-app.add_middleware(AuthorizeRequestMiddleware)
+app.add_middleware(AuthenticateRequestMiddleware)
 
 
 app.add_middleware(

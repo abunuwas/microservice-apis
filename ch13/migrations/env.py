@@ -39,7 +39,9 @@ def run_migrations_offline():
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = os.getenv('DB_URL')
+
+    assert url is not None, 'DB_URL environment variable needed.'
 
     context.configure(
         url=url,
@@ -59,7 +61,9 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = os.getenv('DB_URL')
+
+    assert url is not None, 'DB_URL environment variable needed.'
 
     connectable = create_engine(url)
 

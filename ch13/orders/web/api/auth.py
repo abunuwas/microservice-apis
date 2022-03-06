@@ -8,7 +8,7 @@ X509_CERT_TEMPLATE = "-----BEGIN CERTIFICATE-----\n{key}\n-----END CERTIFICATE--
 
 public_keys = requests.get(
     "https://coffeemesh-dev.eu.auth0.com/.well-known/jwks.json"
-).json()["keys"]
+).json()
 
 
 def _get_certificate_for_kid(kid):
@@ -16,7 +16,7 @@ def _get_certificate_for_kid(kid):
     Return the public key whose ID matches the provided kid.
     If no match is found, an exception is raised.
     """
-    for key in public_keys:
+    for key in public_keys["keys"]:
         if key["kid"] == kid:
             return key["x5c"][0]
     raise Exception(f"Not matching key found for kid {kid}")
