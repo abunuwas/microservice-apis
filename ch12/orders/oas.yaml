@@ -6,6 +6,8 @@ info:
   version: 1.0.0
 
 servers:
+  - url: http://localhost:8000
+    description: local development server
   - url: https://coffeemesh.com
     description: main production server
   - url: https://coffeemesh-staging.com
@@ -43,7 +45,9 @@ paths:
                   orders:
                     type: array
                     items:
-                      $ref: '#/components/schemas/GetOrderSchema'
+                      $ref: '#/components/schemas/FullOrderSchema'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
     post:
       operationId: createOrder
@@ -61,42 +65,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
-          links:
-            GetOrder:
-              operationId: getOrder
-              parameters:
-                order_id: '$response.body#/id'
-              description: >
-                The `id` value returned in the response can be used as
-                the `order_id` parameter in `GET /orders/{order_id}
-            UpdateOrder:
-              operationId: updateOrder
-              parameters:
-                order_id: '$response.body#/id'
-              description: >
-                The `id` value returned in the response can be used as
-                the `order_id` parameter in `PUT /orders/{order_id}
-            DeleteOrder:
-              operationId: deleteOrder
-              parameters:
-                order_id: '$response.body#/id'
-              description: >
-                The `id` value returned in the response can be used as
-                the `order_id` parameter in `DELETE /orders/{order_id}
-            CancelOrder:
-              operationId: cancelOrder
-              parameters:
-                order_id: '$response.body#/id'
-              description: >
-                The `id` value returned in the response can be used as
-                the `order_id` parameter in `DELETE /orders/{order_id}/cancel
-            PayOrder:
-              operationId: payOrder
-              parameters:
-                order_id: '$response.body#/id'
-              description: >
-                The `id` value returned in the response can be used as
-                the `order_id` parameter in `DELETE /orders/{order_id}/pay
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
   /orders/{order_id}:
     parameters:
@@ -105,6 +75,7 @@ paths:
         required: true
         schema:
           type: string
+          format: uuid
         example: d222e7a3-6afb-463a-9709-38eb70cc670d
     get:
       operationId: getOrder
@@ -118,6 +89,8 @@ paths:
                 $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
     put:
       operationId: updateOrder
@@ -137,6 +110,8 @@ paths:
                 $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
     delete:
       operationId: deleteOrder
@@ -146,6 +121,8 @@ paths:
           description: The resource was deleted successfully
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
   /orders/{order_id}/pay:
     parameters:
@@ -154,6 +131,7 @@ paths:
         required: true
         schema:
           type: string
+          format: uuid
         example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
       operationId: payOrder
@@ -167,6 +145,8 @@ paths:
                 $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
 
   /orders/{order_id}/cancel:
@@ -176,6 +156,7 @@ paths:
         required: true
         schema:
           type: string
+          format: uuid
         example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
       operationId: cancelOrder
@@ -187,6 +168,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
 components:
   responses:
@@ -196,29 +181,42 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    UnprocessableEntity:
+      description: The payload contains invalid values.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
 
   securitySchemes:
+    openId:
+      type: openIdConnect
+      openIdConnectUrl: https://coffeemesh-dev.eu.auth0.com/.well-known/openid-configuration
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://coffeemesh-dev.eu.auth0.com/oauth/token
+          scopes: {}
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    basicAuth:
-      type: http
-      scheme: basic
 
   schemas:
     Error:
       type: object
       properties:
-        error:
-          type: string
+        detail:
+          oneOf:
+            - type: string
+            - type: array
       required:
-        - error
+        - detail
       additionalProperties: false
 
     OrderItemSchema:
       type: object
-      additionalProperties: false
       required:
         - product
         - size
@@ -238,8 +236,8 @@ components:
           minimum: 1
 
     CreateOrderSchema:
-      type: object
       additionalProperties: false
+      type: object
       required:
         - order
       properties:
@@ -249,11 +247,8 @@ components:
           items:
             $ref: '#/components/schemas/OrderItemSchema'
 
-    GetOrderSchema:
+    FullOrderSchema:
       type: object
-      additionalProperties: false
-      allOf:
-        - $ref: '#/components/schemas/CreateOrderSchema'
       required:
         - id
         - created
@@ -275,3 +270,31 @@ components:
             - cancelled
             - dispatched
             - delivered
+        order:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/OrderItemSchema'
+
+    GetOrderSchema:
+      additionalProperties: false
+      allOf:
+        - $ref: '#/components/schemas/FullOrderSchema'
+
+security:
+  - oauth2:
+      - getOrders
+      - createOrder
+      - getOrder
+      - updateOrder
+      - deleteOrder
+      - payOrder
+      - cancelOrder
+  - bearerAuth:
+      - getOrders
+      - createOrder
+      - getOrder
+      - updateOrder
+      - deleteOrder
+      - payOrder
+      - cancelOrder

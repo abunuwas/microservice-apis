@@ -27,8 +27,8 @@ paths:
         required: false
         schema:
           type: integer
-      summary: Returns a list of orders
       operationId: getOrders
+      summary: Returns a list of orders
       description: >
         A list of orders made by the customer
         sorted by date. Allows to filter orders
@@ -45,30 +45,62 @@ paths:
                   orders:
                     type: array
                     items:
-                      $ref: '#/components/schemas/GetOrderSchema'
+                      $ref: '#/components/schemas/FullOrderSchema'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
     post:
-      summary: Creates an order
       operationId: createOrder
+      summary: Creates an order
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              additionalProperties: false
-              allOf:
-                - $ref: '#/components/schemas/CreateOrderSchema'
+              $ref: '#/components/schemas/CreateOrderSchema'
       responses:
         '201':
           description: A JSON representation of the created order
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
+          links:
+            GetOrder:
+              operationId: getOrder
+              parameters:
+                order_id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `order_id` parameter in `GET /orders/{order_id}
+            UpdateOrder:
+              operationId: updateOrder
+              parameters:
+                order_id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `order_id` parameter in `PUT /orders/{order_id}
+            DeleteOrder:
+              operationId: deleteOrder
+              parameters:
+                order_id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `order_id` parameter in `DELETE /orders/{order_id}
+            CancelOrder:
+              operationId: cancelOrder
+              parameters:
+                order_id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `order_id` parameter in `DELETE /orders/{order_id}/cancel
+            PayOrder:
+              operationId: payOrder
+              parameters:
+                order_id: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `order_id` parameter in `DELETE /orders/{order_id}/pay
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
@@ -80,51 +112,46 @@ paths:
         schema:
           type: string
           format: uuid
+        example: d222e7a3-6afb-463a-9709-38eb70cc670d
     get:
-      summary: Returns the details of a specific order
       operationId: getOrder
+      summary: Returns the details of a specific order
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
     put:
-      summary: Replaces an existing order
       operationId: updateOrder
+      summary: Replaces an existing order
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              additionalProperties: false
-              allOf:
-                - $ref: '#/components/schemas/CreateOrderSchema'
+              $ref: '#/components/schemas/CreateOrderSchema'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
     delete:
-      summary: Deletes an existing order
       operationId: deleteOrder
+      summary: Deletes an existing order
       responses:
         '204':
           description: The resource was deleted successfully
@@ -141,18 +168,17 @@ paths:
         schema:
           type: string
           format: uuid
+        example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
-      summary: Processes payment for an order
       operationId: payOrder
+      summary: Processes payment for an order
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -167,18 +193,17 @@ paths:
         schema:
           type: string
           format: uuid
+        example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
-      summary: Cancels an order
       operationId: cancelOrder
+      summary: Cancels an order
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -247,6 +272,7 @@ components:
           minimum: 1
 
     CreateOrderSchema:
+      additionalProperties: false
       type: object
       required:
         - order
@@ -257,7 +283,7 @@ components:
           items:
             $ref: '#/components/schemas/OrderItemSchema'
 
-    GetOrderSchema:
+    FullOrderSchema:
       type: object
       required:
         - id
@@ -280,9 +306,16 @@ components:
             - cancelled
             - dispatched
             - delivered
-      allOf:
-        - $ref: '#/components/schemas/CreateOrderSchema'
+        order:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/OrderItemSchema'
 
+    GetOrderSchema:
+      additionalProperties: false
+      allOf:
+        - $ref: '#/components/schemas/FullOrderSchema'
 
 security:
   - oauth2:
