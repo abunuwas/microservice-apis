@@ -91,9 +91,7 @@ def cancel_order(order_id: UUID):
         with UnitOfWork() as unit_of_work:
             repo = OrdersRepository(unit_of_work.session)
             orders_service = OrdersService(repo)
-            order = orders_service.update_order(
-                order_id=order_id, status='cancelled'
-            )
+            order = orders_service.cancel_order(order_id=order_id)
             unit_of_work.commit()
         return order.dict()
     except OrderNotFoundError:
