@@ -15,8 +15,8 @@ class OrdersService:
             return order
         raise OrderNotFoundError(f"Order with id {order_id} not found")
 
-    def update_order(self, order_id, **payload):
-        order = self.orders_repository.get(order_id)
+    def update_order(self, order_id, user_id, **payload):
+        order = self.orders_repository.get(order_id, user_id=user_id)
         if order is None:
             raise OrderNotFoundError(f"Order with id {order_id} not found")
         return self.orders_repository.update(order_id, **payload)
@@ -25,8 +25,8 @@ class OrdersService:
         limit = filters.pop("limit", None)
         return self.orders_repository.list(limit=limit, **filters)
 
-    def pay_order(self, order_id):
-        order = self.orders_repository.get(order_id)
+    def pay_order(self, order_id, user_id):
+        order = self.orders_repository.get(order_id, user_id=user_id)
         if order is None:
             raise OrderNotFoundError(f"Order with id {order_id} not found")
         order.pay()
@@ -35,15 +35,15 @@ class OrdersService:
             order_id, status="progress", schedule_id=schedule_id
         )
 
-    def cancel_order(self, order_id):
-        order = self.orders_repository.get(order_id)
+    def cancel_order(self, order_id, user_id):
+        order = self.orders_repository.get(order_id, user_id=user_id)
         if order is None:
             raise OrderNotFoundError(f"Order with id {order_id} not found")
         order.cancel()
         return self.orders_repository.update(order_id, status="cancelled")
 
-    def delete_order(self, order_id):
-        order = self.orders_repository.get(order_id)
+    def delete_order(self, order_id, user_id):
+        order = self.orders_repository.get(order_id, user_id=user_id)
         if order is None:
             raise OrderNotFoundError(f"Order with id {order_id} not found")
         return self.orders_repository.delete(order_id)
