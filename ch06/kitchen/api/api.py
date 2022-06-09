@@ -11,7 +11,8 @@ from api.schemas import (
     GetScheduledOrderSchema,
     ScheduleOrderSchema,
     GetKitchenScheduleParameters,
-    GetScheduledOrdersSchema
+    GetScheduledOrdersSchema,
+    ScheduleStatusSchema
 )
 
 
@@ -29,21 +30,21 @@ def validate_schedule(schedule):
         raise ValidationError(errors)
 
 
-@blueprint.route('/kitchen/schedule')
+@blueprint.route('/kitchen/schedules')
 class KitchenSchedules(MethodView):
 
     @blueprint.arguments(GetKitchenScheduleParameters, location='query')
-    @blueprint.response(GetScheduledOrdersSchema)
-    def get(self, args):
+    @blueprint.response(status_code=200, schema=GetScheduledOrdersSchema)
+    def get(self, parameters):
         for schedule in schedules:
             validate_schedule(schedule)
 
-        if not args:
+        if not parameters:
             return {'schedules': schedules}, 200
 
         query_set = [schedule for schedule in schedules]
 
-        cancelled = args.get('cancelled')
+        cancelled = parameters.get('cancelled')
         if cancelled is not None:
             if cancelled:
                 query_set = [
@@ -56,66 +57,76 @@ class KitchenSchedules(MethodView):
                     if schedule['status'] != 'cancelled'
                 ]
 
-        since = args.get('since')
+        since = parameters.get('since')
         if since is not None:
             query_set = [
                 schedule for schedule in schedules
                 if schedule['scheduled'] >= since
             ]
 
-        limit = args.get('limit')
+        limit = parameters.get('limit')
         if limit is not None and len(query_set) > limit:
             query_set = query_set[:limit]
 
-        return {'schedules': query_set}, 200
+        return {'schedules': query_set}
 
     @blueprint.arguments(ScheduleOrderSchema)
-    @blueprint.response(GetScheduledOrderSchema)
+    @blueprint.response(status_code=201, schema=GetScheduledOrderSchema)
     def post(self, payload):
         payload['id'] = str(uuid.uuid4())
         payload['scheduled'] = datetime.utcnow()
         payload['status'] = 'pending'
         schedules.append(payload)
         validate_schedule(payload)
-        return payload, 201
+        return payload
 
 
-@blueprint.route('/kitchen/schedule/<schedule_id>')
+@blueprint.route('/kitchen/schedules/<schedule_id>')
 class KitchenSchedule(MethodView):
 
-    @blueprint.response(GetScheduledOrderSchema)
+    @blueprint.response(status_code=200, schema=GetScheduledOrderSchema)
     def get(self, schedule_id):
         for schedule in schedules:
             if schedule['id'] == schedule_id:
                 validate_schedule(schedule)
-                return schedule, 200
+                return schedule
         abort(404, description=f'Resource with ID {schedule_id} not found')
 
     @blueprint.arguments(ScheduleOrderSchema)
-    @blueprint.response(GetScheduledOrderSchema)
+    @blueprint.response(status_code=200, schema=GetScheduledOrderSchema)
     def put(self, payload, schedule_id):
         for schedule in schedules:
             if schedule['id'] == schedule_id:
                 schedule.update(payload)
                 validate_schedule(schedule)
-                return schedule, 200
+                return schedule
         abort(404, description=f'Resource with ID {schedule_id} not found')
 
-    @blueprint.response()
+    @blueprint.response(status_code=204)
     def delete(self, schedule_id):
         for index, schedule in enumerate(schedules):
             if schedule['id'] == schedule_id:
                 schedules.pop(index)
-                return schedule, 204
+                return
         abort(404, description=f'Resource with ID {schedule_id} not found')
 
 
-@blueprint.response(GetScheduledOrderSchema)
-@blueprint.route('/kitchen/schedule/<schedule_id>/cancel')
+@blueprint.response(status_code=200, schema=GetScheduledOrderSchema)
+@blueprint.route('/kitchen/schedules/<schedule_id>/cancel', methods=['POST'])
 def cancel_schedule(schedule_id):
     for schedule in schedules:
         if schedule['id'] == schedule_id:
             schedule['status'] = 'cancelled'
             validate_schedule(schedule)
-            return schedule, 200
+            return schedule
+    abort(404, description=f'Resource with ID {schedule_id} not found')
+
+
+@blueprint.response(status_code=200, schema=ScheduleStatusSchema)
+@blueprint.route('/kitchen/schedules/<schedule_id>/status', methods=['GET'])
+def cancel_schedule(schedule_id):
+    for schedule in schedules:
+        if schedule['id'] == schedule_id:
+            validate_schedule(schedule)
+            return {'status': schedule['status']}
     abort(404, description=f'Resource with ID {schedule_id} not found')
