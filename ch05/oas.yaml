@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 
 info:
   title: Orders API
@@ -26,6 +26,7 @@ paths:
         schema:
           type: integer
       summary: Returns a list of orders
+      operationId: getOrders
       description: >
         A list of orders made by the customer
         sorted by date. Allows to filter orders
@@ -37,15 +38,17 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: false
                 properties:
                   orders:
                     type: array
                     items:
                       $ref: '#/components/schemas/GetOrderSchema'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
     post:
       summary: Creates an order
+      operationId: createOrder
       requestBody:
         required: true
         content:
@@ -59,6 +62,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
   /orders/{order_id}:
     parameters:
@@ -67,8 +72,10 @@ paths:
         required: true
         schema:
           type: string
+          format: uuid
     get:
       summary: Returns the details of a specific order
+      operationId: getOrder
       responses:
         '200':
           description: OK
@@ -78,9 +85,12 @@ paths:
                 $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
     put:
       summary: Replaces an existing order
+      operationId: updateOrder
       requestBody:
         required: true
         content:
@@ -96,14 +106,19 @@ paths:
                 $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
     delete:
       summary: Deletes an existing order
+      operationId: deleteOrder
       responses:
         '204':
           description: The resource was deleted successfully
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
   /orders/{order_id}/pay:
     parameters:
@@ -112,8 +127,10 @@ paths:
         required: true
         schema:
           type: string
+          format: uuid
     post:
       summary: Processes payment for an order
+      operationId: payOrder
       responses:
         '200':
           description: OK
@@ -123,6 +140,8 @@ paths:
                 $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
 
   /orders/{order_id}/cancel:
@@ -132,8 +151,10 @@ paths:
         required: true
         schema:
           type: string
+          format: uuid
     post:
       summary: Cancels an order
+      operationId: cancelOrder
       responses:
         '200':
           description: OK
@@ -141,6 +162,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
 components:
   responses:
@@ -150,29 +175,41 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    UnprocessableEntity:
+      description: The payload contains invalid values.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
 
   securitySchemes:
+    openId:
+      type: openIdConnect
+      openIdConnectUrl: https://coffeemesh-dev.eu.auth0.com/.well-known/openid-configuration
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://coffeemesh-dev.eu.auth0.com/oauth/token
+          scopes: {}
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    basicAuth:
-      type: http
-      scheme: basic
 
   schemas:
     Error:
       type: object
       properties:
-        error:
-          type: string
+        detail:
+          oneOf:
+            - type: string
+            - type: array
       required:
-        - error
-      additionalProperties: false
+        - detail
 
     OrderItemSchema:
       type: object
-      additionalProperties: false
       required:
         - product
         - size
@@ -193,7 +230,6 @@ components:
 
     CreateOrderSchema:
       type: object
-      additionalProperties: false
       required:
         - order
       properties:
@@ -205,7 +241,6 @@ components:
 
     GetOrderSchema:
       type: object
-      additionalProperties: false
       allOf:
         - $ref: '#/components/schemas/CreateOrderSchema'
       required:
@@ -229,3 +264,20 @@ components:
             - cancelled
             - dispatched
             - delivered
+security:
+  - oauth2:
+      - getOrders
+      - createOrder
+      - getOrder
+      - updateOrder
+      - deleteOrder
+      - payOrder
+      - cancelOrder
+  - bearerAuth:
+      - getOrders
+      - createOrder
+      - getOrder
+      - updateOrder
+      - deleteOrder
+      - payOrder
+      - cancelOrder
