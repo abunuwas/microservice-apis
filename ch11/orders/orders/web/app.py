@@ -36,7 +36,7 @@ class AuthorizeRequestMiddleware(BaseHTTPMiddleware):
             request.state.user_id = "test"
             return await call_next(request)
 
-        if request.url.path in ["/docs", "/openapi.json"]:
+        if request.url.path in ["/docs/orders", "/openapi/orders.json"]:
             return await call_next(request)
         if request.method == "OPTIONS":
             return await call_next(request)
