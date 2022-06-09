@@ -29,7 +29,7 @@ def upgrade():
     )
     op.create_table('order_item',
     sa.Column('id', sa.String(), nullable=False),
-    sa.Column('order_id', sa.Integer(), nullable=True),
+    sa.Column('order_id', sa.String(), nullable=True),
     sa.Column('product', sa.String(), nullable=False),
     sa.Column('size', sa.String(), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
