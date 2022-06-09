@@ -57,7 +57,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateOrderSchema'
+              additionalProperties: false
+              allOf:
+                - $ref: '#/components/schemas/CreateOrderSchema'
       responses:
         '201':
           description: A JSON representation of the created order
@@ -103,7 +105,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateOrderSchema'
+              additionalProperties: false
+              allOf:
+                - $ref: '#/components/schemas/CreateOrderSchema'
       responses:
         '200':
           description: OK
@@ -244,7 +248,6 @@ components:
 
     CreateOrderSchema:
       type: object
-      additionalProperties: false
       required:
         - order
       properties:
