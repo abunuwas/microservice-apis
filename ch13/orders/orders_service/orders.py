@@ -48,8 +48,8 @@ class Order:
     def cancel(self):
         if self.status == "progress":
             response = requests.post(
-                f"http://localhost:3001/kitchen/schedule/{self.schedule_id}/cancel",
-                data={"order": self.items},
+                f"http://localhost:3000/kitchen/schedules/{self.schedule_id}/cancel",
+                json={"order": [item.dict() for item in self.items]},
             )
             if response.status_code == 200:
                 return
@@ -59,9 +59,9 @@ class Order:
 
     def pay(self):
         response = requests.post(
-            "http://localhost:3001/payments", data={"order_id": self.id}
+            "http://localhost:3001/payments", json={"order_id": self.id}
         )
-        if response.status_code == 200:
+        if response.status_code == 201:
             return
         raise APIIntegrationError(
             f"Could not process payment for order with id {self.id}"
@@ -69,8 +69,8 @@ class Order:
 
     def schedule(self):
         response = requests.post(
-            "http://localhost:3000/kitchen/schedule",
-            data={"order": [item.dict() for item in self.items]},
+            "http://localhost:3000/kitchen/schedules",
+            json={"order": [item.dict() for item in self.items]},
         )
         if response.status_code == 201:
             return response.json()["id"]
