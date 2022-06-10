@@ -91,10 +91,14 @@
     </div>
   </div>
 
-  <div id="bottom" class="container-fluid" style="padding-top: 0; margin-top: 25px;">
-    <div class="social-logo"><img :src="github" style="width: 2rem; margin: 10px" alt="github"></div>
-    <div><a href="https://twitter.com/microapis" target="_blank"><img :src="twitter" style="width: 2rem; margin: 10px" alt="twitter"></a></div>
-    <div><a href="https://www.reddit.com/r/microapis/" target="_blank"><img :src="reddit" style="width: 2rem; margin: 10px" alt="reddit"></a></div>
+  <div id="bottom" class="container-fluid" style="padding-top: 0; min-height: 80px;">
+    <div style="padding-top: 10px;">
+      <a href="https://microapis.io" target="_blank"><img :src="microapis" style="width: 1.8rem; margin: 10px" alt="microapis.io"></a>
+      <a href="https://github.com/abunuwas/microservice-apis" target="_blank"><img :src="github" style="width: 2rem; margin: 10px" alt="github"></a>
+      <a href="https://twitter.com/microapis" target="_blank"><img :src="twitter" style="width: 2rem; margin: 10px" alt="twitter"></a>
+      <a href="https://www.reddit.com/r/microapis/" target="_blank"><img :src="reddit" style="width: 2rem; margin: 10px" alt="reddit"></a>
+      <a href="https://www.youtube.com/channel/UCtrp0AWmJJXb50zb12XxTlQ" target="_blank"><img :src="youtube" style="width: 2.5rem; margin: 10px" alt="reddit"></a>
+    </div>
   </div>
 </template>
 
@@ -120,6 +124,11 @@ export default defineComponent({
       orders: [],
       showOrders: false,
       selectedSize: null,
+      microapis: require('../public/microapis.png'),
+      github: require('../public/github.png'),
+      twitter: require('../public/twitter.png'),
+      reddit: require('../public/reddit.png'),
+      youtube: require('../public/youtube.png'),
       shoppingCartIcon: require('../public/shopping-cart.png'),
       copyIcon: require('../public/copy.png'),
       authToken: null
