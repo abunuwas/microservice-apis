@@ -30,7 +30,7 @@ paths:
                   format: uuid
 
       responses:
-        '200':
+        '201':
           description: A JSON representation of the scheduled order
           content:
             application/json:
