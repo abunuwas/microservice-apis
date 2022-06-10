@@ -13,6 +13,7 @@ RUN pipenv install --system --deploy
 COPY orders/orders_service /orders/orders/orders_service/
 COPY orders/repository /orders/orders/repository/
 COPY orders/web /orders/orders/web/
+COPY oas.yaml /orders/oas.yaml
 
 EXPOSE 8000
 
