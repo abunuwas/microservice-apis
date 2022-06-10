@@ -14,6 +14,8 @@ COPY orders/orders_service /orders/orders/orders_service/
 COPY orders/repository /orders/orders/repository/
 COPY orders/web /orders/orders/web/
 COPY oas.yaml /orders/oas.yaml
+COPY public_key.pem /orders/public_key.pem
+COPY private.pem /orders/private.pem
 
 EXPOSE 8000
 
