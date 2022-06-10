@@ -1,0 +1,50 @@
+openapi: 3.0.3
+
+info:
+  title: Payments API
+  description: API to process payments for orders
+  version: 1.0.0
+
+servers:
+  - url: https://coffeemesh.com
+    description: main production server
+  - url: https://coffeemesh-staging.com
+    description: staging server for testing purposes only
+
+paths:
+  /payments:
+    post:
+      summary: Schedules an order for production
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - order_id
+                - status
+              properties:
+                order_id:
+                  type: string
+                  format: uuid
+
+      responses:
+        '201':
+          description: A JSON representation of the scheduled order
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - payment_id
+                properties:
+                  payment_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum:
+                      - invalid
+                      - paid
+                      - pending

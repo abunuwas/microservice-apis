@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+
+  database:
+    image: postgres:14.3
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - database-data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    ports:
+      - 8000:8000
+    depends_on:
+      - database
+    environment:
+      DB_URL: postgresql://postgres:postgres@database:5432/postgres
+
+volumes:
+  database-data:
