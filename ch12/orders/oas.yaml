@@ -64,7 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetOrderSchema'
+                  $ref: '#/components/schemas/FullOrderSchema'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
@@ -86,7 +86,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/FullOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -100,14 +100,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateOrderSchema'
+              $ref: '#/components/schemas/FullOrderSchema'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/FullOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -142,12 +142,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/FullOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
-
 
   /orders/{order_id}/cancel:
     parameters:
@@ -167,7 +166,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/FullOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -198,10 +197,6 @@ components:
         clientCredentials:
           tokenUrl: https://coffeemesh-dev.eu.auth0.com/oauth/token
           scopes: {}
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
 
   schemas:
     Error:
@@ -276,21 +271,8 @@ components:
           items:
             $ref: '#/components/schemas/OrderItemSchema'
 
-    GetOrderSchema:
-      additionalProperties: false
-      allOf:
-        - $ref: '#/components/schemas/FullOrderSchema'
-
 security:
   - oauth2:
-      - getOrders
-      - createOrder
-      - getOrder
-      - updateOrder
-      - deleteOrder
-      - payOrder
-      - cancelOrder
-  - bearerAuth:
       - getOrders
       - createOrder
       - getOrder
