@@ -5,8 +5,8 @@ verify_ssl = true
 
 [dev-packages]
 alembic = "*"
-datamodel-code-generator = "*"
 black = "*"
+awscli = "*"
 
 [packages]
 cryptography = "*"
@@ -15,10 +15,11 @@ pyjwt = "*"
 requests = "*"
 sqlalchemy = "*"
 uvicorn = "*"
+pyyaml = "*"
 psycopg2-binary = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.10"
 
 [pipenv]
 allow_prereleases = true

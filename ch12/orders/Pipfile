@@ -4,13 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-datamodel-code-generator = "*"
 dredd-hooks = "*"
 schemathesis = "*"
 
 [packages]
 fastapi = "*"
 uvicorn = "*"
+schemathesis = "==3.15.3"
 
 [requires]
 python_version = "3.10"
