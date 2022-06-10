@@ -65,7 +65,7 @@ def resolve_delete_product(*_, id):
         if product['id'] == id:
             products.pop(index)
             return True
-    raise ItemNotFoundError(f'Product with ID {id_} not found')
+    raise ItemNotFoundError(f'Product with ID {id} not found')
 
 
 @mutation.field('updateStock')

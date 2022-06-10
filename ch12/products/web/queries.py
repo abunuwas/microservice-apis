@@ -19,7 +19,8 @@ def resolve_all_ingredients(*_):
 
 
 def get_page(items, items_per_page, page):
-    start = items_per_page * page
+    page = page - 1
+    start = items_per_page * page if page > 0 else page
     stop = start + items_per_page
     return list(islice(items, start, stop))
 
