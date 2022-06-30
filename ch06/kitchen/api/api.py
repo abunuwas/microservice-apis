@@ -40,7 +40,7 @@ class KitchenSchedules(MethodView):
             validate_schedule(schedule)
 
         if not parameters:
-            return {'schedules': schedules}, 200
+            return {'schedules': schedules}
 
         query_set = [schedule for schedule in schedules]
 
