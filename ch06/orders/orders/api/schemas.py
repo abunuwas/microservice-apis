@@ -3,7 +3,7 @@ from enum import Enum
 from typing import List, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Extra, conint, conlist, validator, StrictStr
+from pydantic import BaseModel, Extra, conint, conlist, validator
 
 
 class Size(Enum):
@@ -22,7 +22,7 @@ class Status(Enum):
 
 
 class OrderItemSchema(BaseModel):
-    product: StrictStr
+    product: str
     size: Size
     quantity: Optional[conint(ge=1, strict=True)] = 1
 

@@ -4,17 +4,16 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-datamodel-code-generator = "*"
 dredd-hooks = "*"
 schemathesis = "*"
 
 [packages]
 fastapi = "*"
 uvicorn = "*"
-orjson = "*"
+schemathesis = "==3.15.3"
 
 [requires]
-python_version = "3.7"
+python_version = "3.10"
 
 [pipenv]
 allow_prereleases = true

@@ -21,7 +21,7 @@ def resolve_add_supplier(*_, name, input):
 def resolve_add_ingredient(*_, name, input):
     input['name'] = name
     input['id'] = uuid.uuid4()
-    input['lastUpdated'] = datetime.now()
+    input['lastUpdated'] = datetime.utcnow()
     ingredients.append(input)
     return input
 
@@ -33,6 +33,7 @@ def resolve_add_product(*_, name, type, input):
         'name': name,
         'available': input.get('available', False),
         'ingredients': input.get('ingredients', []),
+        'lastUpdated': datetime.utcnow(),
     }
     if type == 'cake':
         product.update({
@@ -53,7 +54,7 @@ def resolve_update_product(*_, id, input):
     for product in products:
         if product['id'] == id:
             product.update(input)
-            product['lastUpdated'] = datetime.now()
+            product['lastUpdated'] = datetime.utcnow()
             return product
     raise ItemNotFoundError(f'Product with ID {id} not found')
 
@@ -64,7 +65,7 @@ def resolve_delete_product(*_, id):
         if product['id'] == id:
             products.pop(index)
             return True
-    raise ItemNotFoundError(f'Product with ID {id_} not found')
+    raise ItemNotFoundError(f'Product with ID {id} not found')
 
 
 @mutation.field('updateStock')

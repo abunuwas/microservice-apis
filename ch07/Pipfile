@@ -5,12 +5,14 @@ verify_ssl = true
 
 [dev-packages]
 alembic = "*"
+black = "*"
 
 [packages]
 sqlalchemy = "*"
 fastapi = "*"
 uvicorn = "*"
 requests = "*"
+pyyaml = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.10"

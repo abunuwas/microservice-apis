@@ -31,10 +31,26 @@ class GetScheduledOrderSchema(ScheduleOrderSchema):
 
 
 class GetScheduledOrdersSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     schedules = fields.List(fields.Nested(GetScheduledOrderSchema), required=True)
 
 
+class ScheduleStatusSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    status = fields.String(
+        required=True,
+        validate=validate.OneOf(['pending', 'progress', 'cancelled', 'finished'])  # noqa: E501
+    )
+
+
 class GetKitchenScheduleParameters(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     progress = fields.Boolean()
     limit = fields.Integer()
     since = fields.DateTime()

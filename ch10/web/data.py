@@ -21,7 +21,7 @@ ingredients = [
         },
         'products': [],
         'supplier': '92f2daae-a4f8-4aae-8d74-51dd74e5de6d',
-        'lastUpdated': datetime.now(),
+        'lastUpdated': datetime.utcnow(),
     },
 ]
 
@@ -42,7 +42,7 @@ products = [
         ],
         'hasFilling': False,
         'hasNutsToppingOption': True,
-        'lastUpdated': datetime.now(),
+        'lastUpdated': datetime.utcnow(),
     },
     {
         'id': 'e4e33d0b-1355-4735-9505-749e3fdf8a16',
@@ -59,6 +59,6 @@ products = [
         ],
         'hasCreamOnTopOption': True,
         'hasServeOnIceOption': True,
-        'lastUpdated': datetime.now(),
+        'lastUpdated': datetime.utcnow(),
     },
 ]

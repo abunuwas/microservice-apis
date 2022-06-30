@@ -3,15 +3,13 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-[dev-packages]
-datamodel-code-generator = "*"
-
 [packages]
 fastapi = "*"
 uvicorn = "*"
+pyyaml = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.10"
 
 [pipenv]
 allow_prereleases = true

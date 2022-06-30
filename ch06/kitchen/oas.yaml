@@ -6,15 +6,19 @@ info:
   version: 1.0.0
 
 servers:
+  - url: http://127.0.0.1:5000
+    description: URL for local development and testing
   - url: https://coffeemesh.com
     description: main production server
   - url: https://coffeemesh-staging.com
     description: staging server for testing purposes only
 
 paths:
-  /kitchen/schedule:
+  /kitchen/schedules:
     get:
       summary: Returns a list of orders scheduled for production
+      tags:
+        - kitchen
       parameters:
         - name: progress
           in: query
@@ -41,13 +45,15 @@ paths:
               schema:
                 type: object
                 properties:
-                  orders:
+                  schedules:
                     type: array
                     items:
                       $ref: '#/components/schemas/GetScheduledOrderSchema'
 
     post:
       summary: Schedules an order for production
+      tags:
+        - kitchen
       requestBody:
         required: true
         content:
@@ -62,15 +68,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetScheduledOrderSchema'
 
-  /kitchen/schedule/{schedule_id}:
+  /kitchen/schedules/{schedule_id}:
     parameters:
       - in: path
         name: schedule_id
         required: true
         schema:
           type: string
+          format: uuid
     get:
       summary: Returns the status and details of a scheduled order
+      tags:
+        - kitchen
       responses:
         '200':
           description: A JSON representation of a scheduled order
@@ -83,6 +92,8 @@ paths:
 
     put:
       summary: Updates an existing scheduled order
+      tags:
+        - kitchen
       requestBody:
         required: true
         content:
@@ -101,38 +112,46 @@ paths:
 
     delete:
       summary: Deletes an existing order
+      tags:
+        - kitchen
       responses:
         '204':
           description: The resource was deleted successfully
 
-  /kitchen/schedule/{schedule_id}/status:
+  /kitchen/schedules/{schedule_id}/status:
     parameters:
       - in: path
         name: schedule_id
         required: true
         schema:
           type: string
+          format: uuid
     get:
       summary: Returns the status of a scheduled order
+      tags:
+        - kitchen
       responses:
         '200':
           description: A JSON representation of a scheduled order
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ScheduleOrderSchema'
+                $ref: '#/components/schemas/ScheduleStatusSchema'
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /kitchen/schedule/{schedule_id}/cancel:
+  /kitchen/schedules/{schedule_id}/cancel:
     parameters:
       - in: path
         name: schedule_id
         required: true
         schema:
           type: string
-    get:
-      summary: Returns the status and details of a scheduled order
+          format: uuid
+    post:
+      summary: Cancels a scheduled order
+      tags:
+        - kitchen
       responses:
         '200':
           description: A JSON representation of a scheduled order
@@ -161,7 +180,6 @@ components:
 
     OrderItemSchema:
       type: object
-      additionalProperties: false
       required:
         - product
         - quantity
@@ -216,3 +234,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OrderItemSchema'
+
+    ScheduleStatusSchema:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - pending
+            - progress
+            - cancelled
+            - finished

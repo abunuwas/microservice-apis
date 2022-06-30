@@ -5,6 +5,8 @@ verify_ssl = true
 
 [dev-packages]
 schemathesis = "*"
+pytest = "*"
+black = "*"
 
 [packages]
 uvicorn = "*"
@@ -13,7 +15,7 @@ gql = "*"
 lock = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.10"
 
 [pipenv]
 allow_prereleases = true
