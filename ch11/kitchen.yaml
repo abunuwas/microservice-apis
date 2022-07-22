@@ -199,7 +199,7 @@ components:
 
     ScheduleOrderSchema:
       type: object
-      additionalProperties: false
+      unevaluatedProperties: false
       required:
         - order
       properties:
@@ -210,7 +210,7 @@ components:
 
     GetScheduledOrderSchema:
       type: object
-      additionalProperties: false
+      unevaluatedProperties: false
       required:
         - id
         - order
