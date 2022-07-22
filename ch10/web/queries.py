@@ -45,7 +45,7 @@ def resolve_products(*_, input=None):
             if product['price'] <= input['maxPrice']
         ]
     filtered.sort(
-        key=lambda product: product[input['sortBy']],
+        key=lambda product: product.get(input['sortBy'], 0),
         reverse=input['sort'] == 'DESCENDING'
     )
     return get_page(filtered, input['resultsPerPage'], input['page'])
