@@ -43,6 +43,7 @@ paths:
           content:
             application/json:
               schema:
+                additionalProperties: false
                 type: object
                 properties:
                   schedules:
@@ -179,6 +180,7 @@ components:
           type: string
 
     OrderItemSchema:
+      additionalProperties: false
       type: object
       required:
         - product
@@ -199,7 +201,7 @@ components:
 
     ScheduleOrderSchema:
       type: object
-      unevaluatedProperties: false
+      additionalProperties: false
       required:
         - order
       properties:
@@ -210,7 +212,7 @@ components:
 
     GetScheduledOrderSchema:
       type: object
-      unevaluatedProperties: false
+      additionalProperties: false
       required:
         - id
         - order

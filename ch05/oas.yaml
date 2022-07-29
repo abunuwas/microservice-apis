@@ -6,6 +6,8 @@ info:
   version: 1.0.0
 
 servers:
+  - url: http://localhost:8000
+    description: local development server
   - url: https://coffeemesh.com
     description: main production server
   - url: https://coffeemesh-staging.com
@@ -38,7 +40,6 @@ paths:
             application/json:
               schema:
                 type: object
-                unevaluatedProperties: false
                 properties:
                   orders:
                     type: array
@@ -210,7 +211,6 @@ components:
             - type: array
       required:
         - detail
-      additionalProperties: false
 
     OrderItemSchema:
       type: object
@@ -231,6 +231,7 @@ components:
           format: int64
           default: 1
           minimum: 1
+          maximum: 1000000
 
     CreateOrderSchema:
       type: object
@@ -244,15 +245,13 @@ components:
             $ref: '#/components/schemas/OrderItemSchema'
 
     GetOrderSchema:
-      unevaluatedProperties: false
       allOf:
-        - $ref: '#/components/schemas/CreateOrderSchema'
+        - $ref: "#/components/schemas/CreateOrderSchema"
         - type: object
           required:
             - id
             - created
             - status
-            - order
           properties:
             id:
               type: string
