@@ -14,7 +14,10 @@ from jwt import (
     MissingRequiredClaimError,
 )
 from starlette import status
-from starlette.middleware.base import RequestResponseEndpoint, BaseHTTPMiddleware
+from starlette.middleware.base import (
+    RequestResponseEndpoint,
+    BaseHTTPMiddleware,
+)
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
@@ -24,6 +27,7 @@ from orders.web.api.auth import decode_and_validate_token
 app = FastAPI(debug=True, openapi_url="/openapi/orders.json", docs_url="/docs/orders")
 
 oas_doc = yaml.safe_load((Path(__file__).parent / "../../oas.yaml").read_text())
+
 
 app.openapi = lambda: oas_doc
 
