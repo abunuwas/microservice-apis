@@ -18,6 +18,10 @@ kitchen_api = Api(app)
 kitchen_api.register_blueprint(blueprint)
 
 api_spec = yaml.safe_load((Path(__file__).parent / "oas.yaml").read_text())
-spec = APISpec(title=api_spec['info']['title'], version=api_spec['info']['version'], openapi_version=api_spec['openapi'])
+spec = APISpec(
+    title=api_spec["info"]["title"],
+    version=api_spec["info"]["version"],
+    openapi_version=api_spec["openapi"],
+)
 spec.to_dict = lambda: api_spec
 kitchen_api.spec = spec

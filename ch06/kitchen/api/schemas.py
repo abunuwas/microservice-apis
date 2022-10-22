@@ -7,10 +7,11 @@ class OrderItemSchema(Schema):
 
     product = fields.String(required=True)
     size = fields.String(
-        required=True, validate=validate.OneOf(['small', 'medium', 'big'])
+        required=True, validate=validate.OneOf(["small", "medium", "big"])
     )
     quantity = fields.Integer(
-        validate=validate.Range(1, min_inclusive=True), required=True,
+        validate=validate.Range(1, min_inclusive=True),
+        required=True,
     )
 
 
@@ -26,7 +27,7 @@ class GetScheduledOrderSchema(ScheduleOrderSchema):
     scheduled = fields.DateTime(required=True)
     status = fields.String(
         required=True,
-        validate=validate.OneOf(['pending', 'progress', 'cancelled', 'finished'])  # noqa: E501
+        validate=validate.OneOf(["pending", "progress", "cancelled", "finished"]),
     )
 
 
@@ -43,7 +44,9 @@ class ScheduleStatusSchema(Schema):
 
     status = fields.String(
         required=True,
-        validate=validate.OneOf(['pending', 'progress', 'cancelled', 'finished'])  # noqa: E501
+        validate=validate.OneOf(
+            ["pending", "progress", "cancelled", "finished"]
+        ),  # noqa: E501
     )
 
 

@@ -57,18 +57,14 @@ paths:
         content:
           application/json:
             schema:
-              additionalProperties: false
-              allOf:
-                - $ref: '#/components/schemas/CreateOrderSchema'
+              $ref: '#/components/schemas/CreateOrderSchema'
       responses:
         '201':
           description: A JSON representation of the created order
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
@@ -89,9 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -105,18 +99,14 @@ paths:
         content:
           application/json:
             schema:
-              additionalProperties: false
-              allOf:
-                - $ref: '#/components/schemas/CreateOrderSchema'
+              $ref: '#/components/schemas/CreateOrderSchema'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref:  '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -150,9 +140,7 @@ paths:
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -176,9 +164,7 @@ paths:
           content:
             application/json:
               schema:
-                additionalProperties: false
-                allOf:
-                  - $ref: '#/components/schemas/GetOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -227,6 +213,7 @@ components:
       additionalProperties: false
 
     OrderItemSchema:
+      additionalProperties: false
       type: object
       required:
         - product
@@ -245,8 +232,10 @@ components:
           format: int64
           default: 1
           minimum: 1
+          maximum: 1000000
 
     CreateOrderSchema:
+      additionalProperties: false
       type: object
       required:
         - order
@@ -258,6 +247,7 @@ components:
             $ref: '#/components/schemas/OrderItemSchema'
 
     GetOrderSchema:
+      additionalProperties: false
       type: object
       required:
         - id
@@ -280,9 +270,11 @@ components:
             - cancelled
             - dispatched
             - delivered
-      allOf:
-        - $ref: '#/components/schemas/CreateOrderSchema'
-
+        order:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/OrderItemSchema'
 
 security:
   - oauth2:

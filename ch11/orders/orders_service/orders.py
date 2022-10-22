@@ -1,6 +1,9 @@
 import requests
 
-from orders.orders_service.exceptions import APIIntegrationError, InvalidActionError
+from orders.orders_service.exceptions import (
+    APIIntegrationError,
+    InvalidActionError,
+)
 
 
 class OrderItem:
@@ -11,7 +14,11 @@ class OrderItem:
         self.size = size
 
     def dict(self):
-        return {"product": self.product, "size": self.size, "quantity": self.quantity}
+        return {
+            "product": self.product,
+            "size": self.size,
+            "quantity": self.quantity,
+        }
 
 
 class Order:
@@ -47,8 +54,9 @@ class Order:
 
     def cancel(self):
         if self.status == "progress":
+            kitchen_base_url = "http://localhost:3000/kitchen"
             response = requests.post(
-                f"http://localhost:3000/kitchen/schedules/{self.schedule_id}/cancel",
+                f"{kitchen_base_url}/schedules/{self.schedule_id}/cancel",
                 json={"order": [item.dict() for item in self.items]},
             )
             if response.status_code == 200:

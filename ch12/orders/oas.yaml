@@ -27,8 +27,8 @@ paths:
         required: false
         schema:
           type: integer
-      operationId: getOrders
       summary: Returns a list of orders
+      operationId: getOrders
       description: >
         A list of orders made by the customer
         sorted by date. Allows to filter orders
@@ -45,13 +45,13 @@ paths:
                   orders:
                     type: array
                     items:
-                      $ref: '#/components/schemas/FullOrderSchema'
+                      $ref: '#/components/schemas/GetOrderSchema'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
     post:
-      operationId: createOrder
       summary: Creates an order
+      operationId: createOrder
       requestBody:
         required: true
         content:
@@ -64,7 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/FullOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
@@ -78,44 +78,44 @@ paths:
           format: uuid
         example: d222e7a3-6afb-463a-9709-38eb70cc670d
     get:
-      operationId: getOrder
       summary: Returns the details of a specific order
+      operationId: getOrder
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FullOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
     put:
-      operationId: updateOrder
       summary: Replaces an existing order
+      operationId: updateOrder
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FullOrderSchema'
+              $ref: '#/components/schemas/CreateOrderSchema'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FullOrderSchema'
+                $ref:  '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
 
     delete:
-      operationId: deleteOrder
       summary: Deletes an existing order
+      operationId: deleteOrder
       responses:
         '204':
           description: The resource was deleted successfully
@@ -134,19 +134,20 @@ paths:
           format: uuid
         example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
-      operationId: payOrder
       summary: Processes payment for an order
+      operationId: payOrder
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FullOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
+
 
   /orders/{order_id}/cancel:
     parameters:
@@ -158,15 +159,15 @@ paths:
           format: uuid
         example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
-      operationId: cancelOrder
       summary: Cancels an order
+      operationId: cancelOrder
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FullOrderSchema'
+                $ref: '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -197,6 +198,10 @@ components:
         clientCredentials:
           tokenUrl: https://coffeemesh-dev.eu.auth0.com/oauth/token
           scopes: {}
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
   schemas:
     Error:
@@ -211,6 +216,7 @@ components:
       additionalProperties: false
 
     OrderItemSchema:
+      additionalProperties: false
       type: object
       required:
         - product
@@ -229,6 +235,7 @@ components:
           format: int64
           default: 1
           minimum: 1
+          maximum: 1000000
 
     CreateOrderSchema:
       additionalProperties: false
@@ -242,7 +249,8 @@ components:
           items:
             $ref: '#/components/schemas/OrderItemSchema'
 
-    FullOrderSchema:
+    GetOrderSchema:
+      additionalProperties: false
       type: object
       required:
         - id
@@ -270,13 +278,3 @@ components:
           minItems: 1
           items:
             $ref: '#/components/schemas/OrderItemSchema'
-
-security:
-  - oauth2:
-      - getOrders
-      - createOrder
-      - getOrder
-      - updateOrder
-      - deleteOrder
-      - payOrder
-      - cancelOrder

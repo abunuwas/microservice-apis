@@ -8,7 +8,8 @@ class OrdersRepository:
 
     def add(self, items, user_id):
         record = OrderModel(
-            items=[OrderItemModel(**item) for item in items], user_id=user_id
+            items=[OrderItemModel(**item) for item in items],
+            user_id=user_id,
         )
         self.session.add(record)
         return Order(**record.dict(), order_=record)

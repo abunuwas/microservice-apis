@@ -11,12 +11,18 @@ from orders.orders_service.orders_service import OrdersService
 from orders.repository.orders_repository import OrdersRepository
 from orders.repository.unit_of_work import UnitOfWork
 from orders.web.app import app
-from orders.web.api.schemas import GetOrderSchema, CreateOrderSchema, GetOrdersSchema
+from orders.web.api.schemas import (
+    GetOrderSchema,
+    CreateOrderSchema,
+    GetOrdersSchema,
+)
 
 
 @app.get("/orders", response_model=GetOrdersSchema)
 def get_orders(
-    request: Request, cancelled: Optional[bool] = None, limit: Optional[int] = None
+    request: Request,
+    cancelled: Optional[bool] = None,
+    limit: Optional[int] = None,
 ):
     with UnitOfWork() as unit_of_work:
         repo = OrdersRepository(unit_of_work.session)
@@ -27,7 +33,11 @@ def get_orders(
     return {"orders": [result.dict() for result in results]}
 
 
-@app.post("/orders", status_code=status.HTTP_201_CREATED, response_model=GetOrderSchema)
+@app.post(
+    "/orders",
+    status_code=status.HTTP_201_CREATED,
+    response_model=GetOrderSchema,
+)
 def create_order(request: Request, payload: CreateOrderSchema):
     with UnitOfWork() as unit_of_work:
         repo = OrdersRepository(unit_of_work.session)
@@ -67,7 +77,9 @@ def update_order(request: Request, order_id: UUID, order_details: CreateOrderSch
             for item in order:
                 item["size"] = item["size"].value
             order = orders_service.update_order(
-                order_id=order_id, items=order, user_id=request.state.user_id
+                order_id=order_id,
+                items=order,
+                user_id=request.state.user_id,
             )
             unit_of_work.commit()
         return order.dict()
@@ -87,7 +99,9 @@ def delete_order(request: Request, order_id: UUID):
         with UnitOfWork() as unit_of_work:
             repo = OrdersRepository(unit_of_work.session)
             orders_service = OrdersService(repo)
-            orders_service.delete_order(order_id=order_id, user_id=request.state.user_id)
+            orders_service.delete_order(
+                order_id=order_id, user_id=request.state.user_id
+            )
             unit_of_work.commit()
         return
     except OrderNotFoundError:
@@ -102,7 +116,9 @@ def cancel_order(request: Request, order_id: UUID):
         with UnitOfWork() as unit_of_work:
             repo = OrdersRepository(unit_of_work.session)
             orders_service = OrdersService(repo)
-            order = orders_service.cancel_order(order_id=order_id, user_id=request.state.user_id)
+            order = orders_service.cancel_order(
+                order_id=order_id, user_id=request.state.user_id
+            )
             unit_of_work.commit()
         return order.dict()
     except OrderNotFoundError:
@@ -117,7 +133,9 @@ def pay_order(request: Request, order_id: UUID):
         with UnitOfWork() as unit_of_work:
             repo = OrdersRepository(unit_of_work.session)
             orders_service = OrdersService(repo)
-            order = orders_service.pay_order(order_id=order_id, user_id=request.state.user_id)
+            order = orders_service.pay_order(
+                order_id=order_id, user_id=request.state.user_id
+            )
             unit_of_work.commit()
         return order.dict()
     except OrderNotFoundError:

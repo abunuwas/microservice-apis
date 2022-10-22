@@ -6,6 +6,8 @@ info:
   version: 1.0.0
 
 servers:
+  - url: http://localhost:8000
+    description: local development server
   - url: https://coffeemesh.com
     description: main production server
   - url: https://coffeemesh-staging.com
@@ -103,7 +105,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetOrderSchema'
+                $ref:  '#/components/schemas/GetOrderSchema'
         '404':
           $ref: '#/components/responses/NotFound'
         '422':
@@ -227,6 +229,7 @@ components:
           format: int64
           default: 1
           minimum: 1
+          maximum: 1000000
 
     CreateOrderSchema:
       type: object
@@ -240,30 +243,30 @@ components:
             $ref: '#/components/schemas/OrderItemSchema'
 
     GetOrderSchema:
-      type: object
       allOf:
-        - $ref: '#/components/schemas/CreateOrderSchema'
-      required:
-        - id
-        - created
-        - status
-        - order
-      properties:
-        id:
-          type: string
-          format: uuid
-        created:
-          type: string
-          format: date-time
-        status:
-          type: string
-          enum:
+        - $ref: "#/components/schemas/CreateOrderSchema"
+        - type: object
+          required:
+            - id
             - created
-            - paid
-            - progress
-            - cancelled
-            - dispatched
-            - delivered
+            - status
+          properties:
+            id:
+              type: string
+              format: uuid
+            created:
+              type: string
+              format: date-time
+            status:
+              type: string
+              enum:
+                - created
+                - paid
+                - progress
+                - cancelled
+                - dispatched
+                - delivered
+
 security:
   - oauth2:
       - getOrders

@@ -10,7 +10,7 @@ gql = "==3.0.0a5"
 requests = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.10"
 
 [pipenv]
 allow_prereleases = true

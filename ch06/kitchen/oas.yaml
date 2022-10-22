@@ -22,7 +22,9 @@ paths:
       parameters:
         - name: progress
           in: query
-          description: Whether the order is in progress or not. In progress means it's in production in the kitchen.
+          description: >-
+            Whether the order is in progress or not.
+            In progress means it's in production in the kitchen.
           required: false
           schema:
             type: boolean
@@ -43,6 +45,7 @@ paths:
           content:
             application/json:
               schema:
+                additionalProperties: false
                 type: object
                 properties:
                   schedules:
@@ -179,6 +182,7 @@ components:
           type: string
 
     OrderItemSchema:
+      additionalProperties: false
       type: object
       required:
         - product
