@@ -76,6 +76,7 @@ paths:
         schema:
           type: string
           format: uuid
+        example: d222e7a3-6afb-463a-9709-38eb70cc670d
     get:
       summary: Returns the details of a specific order
       operationId: getOrder
@@ -131,6 +132,7 @@ paths:
         schema:
           type: string
           format: uuid
+        example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
       summary: Processes payment for an order
       operationId: payOrder
@@ -155,6 +157,7 @@ paths:
         schema:
           type: string
           format: uuid
+        example: d222e7a3-6afb-463a-9709-38eb70cc670d
     post:
       summary: Cancels an order
       operationId: cancelOrder
