@@ -56,9 +56,7 @@ paths:
         content:
           application/json:
             schema:
-              unevaluatedProperties: false
-              allOf:
-                - $ref: '#/components/schemas/CreateOrderSchema'
+              $ref: '#/components/schemas/CreateOrderSchema'
       responses:
         '201':
           description: A JSON representation of the created order
