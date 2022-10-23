@@ -102,13 +102,42 @@ to apply it using Python's excellent property-based testing library [Hypothesis]
 You'll also learn how to use the classic API testing framework [Dredd](https://github.com/apiaryio/dredd), 
 and the more modern and excellent framework [Schemathesis](https://github.com/schemathesis/schemathesis).
 
-#### Chapter 13: Deploying with Docker and Kubernetes
+#### Chapter 13: Dockerizing Microservice APIs
+
+In this chapter, you learn to run your microservice APIs with Docker. You'll learn to 
+write a Dockerfile, build an image, and run the container. You'll also learn to
+use Docker Compose to run multiple services together, including databases. Finally,
+you'll learn to publish your Docker builds to a container registry (AWS ECR).
+
+#### Chapter 14: Deploying Microservice APIs with Kubernetes
 
 In the final chapter of the book, you'll learn to deploy your microservice APIs with Kubernetes. It's a very
 packed chapter as there's a lot to learn and to take, but it's also one of the most gratifying chapters of 
-the book. You'll learn to dockerize Python applications. You'll learn to launch a Kubernetes cluster using 
-[AWS EKS](https://aws.amazon.com/eks/), and to run your workloads with [AWS Fargate](https://aws.amazon.com/fargate/).
+the book. You'll learn to launch a Kubernetes cluster using [AWS EKS](https://aws.amazon.com/eks/), 
+and to run your workloads with [AWS Fargate](https://aws.amazon.com/fargate/).
 You'll also learn to use the [eksctl](https://eksctl.io/) command line tool to manage your Kubernetes 
 infrastructure, and Kubernete's kubectl to manage deployments. You'll learn to launch a serverless Aurora 
 database and to connect securely to it. You'll also learn to manage your application configuration securely.
-  
+
+
+### Appendix A: Types of Web APIs and Protocols
+
+Appendix A gives you an overview of some of the main protocols use nowadays 
+to build APIs. You'll learn about the origin and evolution of APIs, going back to
+the emergence of RPC, all the way to more modern protocols such as GraphQL and gRPC.
+The discussion in this Appendix should help you make a more informed choice about 
+which type of API you should use to integrate your services.
+
+### Appendix B: Managing an APIs' Lifecycle
+
+This appendix teaches you some of the most common strategies for managing API
+versioning. You'll also learn strategies for deprecating and retiring your APIs
+and how to announce these events to your clients.
+
+### Appendix C: API Authorization with an Identity Provider
+
+Appendix C teaches you how to integrate with an identity provider, like Auth0,
+to manage access to your APIs. An identity provider is a service that manages the 
+identity of your users, and it takes care of issuing authorization tokens. All you
+need to do in your API is validating those tokens correctly, and this appendix 
+teaches you how.
