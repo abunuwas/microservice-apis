@@ -40,7 +40,7 @@ def get_orders(cancelled: Optional[bool] = None, limit: Optional[int] = None):
     "/orders",
     status_code=status.HTTP_201_CREATED,
     response_model=GetOrderSchema,
-)  # noqa: E501
+)
 def create_order(order: CreateOrderSchema):
     order = order.dict()
     order["id"] = uuid.uuid4()

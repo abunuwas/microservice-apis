@@ -46,7 +46,7 @@ class ScheduleStatusSchema(Schema):
         required=True,
         validate=validate.OneOf(
             ["pending", "progress", "cancelled", "finished"]
-        ),  # noqa: E501
+        ),
     )
 
 
