@@ -48,7 +48,7 @@ class Order:
         if self.status == 'progress':
             response = requests.post(
                 f'http://localhost:3000/kitchen/schedules/{self.schedule_id}/cancel',
-                json={'order': [item.dict() for item in self.items]}
+                # json={'order': [item.dict() for item in self.items]} This payload is not required.
             )
             if response.status_code == 200:
                 return
